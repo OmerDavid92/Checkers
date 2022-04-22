@@ -2,8 +2,8 @@
 {
     struct Point
     {
-        public int m_X { get; }
-        public int m_Y { get; }
+        public int m_X { get; set; }
+        public int m_Y { get; set; }
         public Point(string i_UserInput)
         {
             m_X = i_UserInput[0] - 'A';
