@@ -40,7 +40,7 @@ namespace Checkers
         private void initBoard(ToolSign i_Player1, ToolSign i_Player2)
         {
             insertPlayerSignToTheBoard(i_Player1.m_trooperSign, 0);
-            insertPlayerSignToTheBoard(i_Player2.m_trooperSign, this.m_BoardSize/2+1);
+            insertPlayerSignToTheBoard(i_Player2.m_trooperSign, this.m_BoardSize / 2 + 1);
         }
 
         private Point getCapturedPosition(Point i_Source, Point i_Destination)
@@ -62,15 +62,15 @@ namespace Checkers
                 }
             }
 
-            return isValid; 
+            return isValid;
         }
 
         private bool TilesColorCheck(Point i_point)
         {
             bool isValid = false;
-            if ((i_point.m_X+ i_point.m_Y)%2!=0)
+            if ((i_point.m_X + i_point.m_Y) % 2 != 0)
             {
-                    isValid = true;
+                isValid = true;
             }
 
             return isValid;
@@ -101,7 +101,7 @@ namespace Checkers
             int yPos = i_Source.m_Y;
             char playerTrooperSign = i_Player.m_ToolSign.m_trooperSign;
             char playerKingSign = i_Player.m_ToolSign.m_kingSign;
-            if (m_Board[xPos,yPos] == playerTrooperSign || m_Board[xPos, yPos] == playerKingSign)
+            if (m_Board[xPos, yPos] == playerTrooperSign || m_Board[xPos, yPos] == playerKingSign)
             {
                 isOwnedByPlayer = true;
             }
@@ -112,7 +112,7 @@ namespace Checkers
         private bool isDestinationOccupied(Point i_Destination)
         {
             bool isOccupied = true;
-            if (m_Board[i_Destination.m_X,i_Destination.m_Y].CompareTo(" ")==0)
+            if (m_Board[i_Destination.m_X, i_Destination.m_Y].CompareTo(" ") == 0)
             {
                 isOccupied = false;
             }
@@ -188,8 +188,10 @@ namespace Checkers
             int captureToolFutureXPosition = i_SourceXPosition + i_XColumnFactor * 2;
             int captureToolFutureYPosition = i_SourceYPosition + i_YRowFactor * 2;
 
-            if (captureToolFutureXPosition >=0 && captureToolFutureXPosition<=(m_BoardSize-1) &&
-                captureToolFutureYPosition >= 0 && captureToolFutureYPosition <= (m_BoardSize - 1))
+            if (captureToolFutureXPosition >= 0 && captureToolFutureXPosition <= (m_BoardSize - 1) &&
+                captureToolFutureYPosition >= 0 && captureToolFutureYPosition <= (m_BoardSize - 1) &&
+                 m_Board[captureToolFutureXPosition, captureToolFutureYPosition].CompareTo(" ") == 0
+                )
             {
                 if (!(m_Board[i_SourceXPosition, i_SourceYPosition].CompareTo(m_Board[xPosOfEatenTool, yPosOfEatenTool]) == 0 ||
               m_Board[xPosOfEatenTool, yPosOfEatenTool].CompareTo(" ") == 0))
@@ -199,6 +201,22 @@ namespace Checkers
             }
 
             return captureOptionAvailable;
+        }
+
+        private bool ToolMoovingOptionsCheck(int i_SourceXPosition, int i_SourceYPosition, int i_XColumnFactor, int i_YRowFactor)
+        {
+            bool moovingOptionAvailable = false;
+            int toolFutureXPosition = i_SourceXPosition + i_XColumnFactor;
+            int toolFutureYPosition = i_SourceYPosition + i_YRowFactor;
+
+            if (toolFutureXPosition >= 0 && toolFutureXPosition <= (m_BoardSize - 1) &&
+                toolFutureYPosition >= 0 && toolFutureYPosition <= (m_BoardSize - 1) &&
+                m_Board[toolFutureXPosition, toolFutureYPosition].CompareTo(" ") == 0)
+            {
+                moovingOptionAvailable = true;
+            }
+
+            return moovingOptionAvailable;
         }
 
 
@@ -236,7 +254,37 @@ namespace Checkers
             return false;
         }
 
-       
+        private bool isPlayerCanMove(Player i_PlayingPlayer)
+        {
+            int directionFactor = directionFactorCalculator(i_PlayingPlayer);
+            char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_trooperSign;
+            char playingPlayerKingSign = i_PlayingPlayer.m_ToolSign.m_kingSign;
+            for (int i = 0; i < m_BoardSize; i++)
+            {
+                for (int j = 0; j < m_BoardSize; j++)
+                {
+                    if (m_Board[i, j].CompareTo(playingPlayerTrooperSign) == 0)
+                    {
+                        if (ToolMoovingOptionsCheck(i, j, 1, directionFactor) ||
+                            ToolMoovingOptionsCheck(i, j, 1, directionFactor))
+                            return true;
+                    }
+
+                    if (m_Board[i, j].CompareTo(playingPlayerKingSign) == 0)
+                    {
+                        if (ToolMoovingOptionsCheck(i, j, 1, 1) ||
+                            ToolMoovingOptionsCheck(i, j, -1, 1) ||
+                            ToolMoovingOptionsCheck(i, j, 1, -1) ||
+                            ToolMoovingOptionsCheck(i, j, -1, -1))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         private bool validateMove(Point i_Source, Point i_Destination, Player i_PlayingPlayer)
         {
             bool isValid = false;
@@ -281,10 +329,10 @@ namespace Checkers
             }
         }
 
-        private bool makeTurn(Point i_Source, Point i_Destination, Player i_PlayingPlayer)
+        public bool MakeTurn(Point i_Source, Point i_Destination, Player i_PlayingPlayer)
         {
             bool isTurnPerformed = false;
-            
+
             if (validateMove(i_Source, i_Destination, i_PlayingPlayer))
             {
                 updateBoard(i_Source, i_Destination);
@@ -294,6 +342,39 @@ namespace Checkers
             return isTurnPerformed;
         }
 
-
+        public bool IsValidMoveExist(Player i_PlayingPlayer)
+        {
+            bool isValidMoveExist = false;
+            if (isPlayerCanCapture(i_PlayingPlayer))
+            {
+                isValidMoveExist = true;
+            }
+            else if (isPlayerCanMove(i_PlayingPlayer))
+            {
+                isValidMoveExist = true;
+            }
+            return isValidMoveExist;
+        }
+        public int SumOfPointsOnBoard(Player i_PlayingPlayer)
+        {
+            int sumOfPointsOnBoard = 0;
+            char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_trooperSign;
+            char playingPlayerKingSign = i_PlayingPlayer.m_ToolSign.m_kingSign;
+            for (int i = 0; i < m_BoardSize; i++)
+            {
+                for (int j = 0; j < m_BoardSize; j++)
+                {
+                    if (m_Board[i, j].CompareTo(playingPlayerTrooperSign) == 0)
+                    {
+                        sumOfPointsOnBoard += 1;
+                    }
+                    else if (m_Board[i, j].CompareTo(playingPlayerKingSign) == 0)
+                    {
+                        sumOfPointsOnBoard += 4;
+                    }
+                }
+            }
+            return sumOfPointsOnBoard;
+        }
     }
 }
