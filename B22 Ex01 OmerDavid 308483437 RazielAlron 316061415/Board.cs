@@ -18,6 +18,11 @@ namespace Checkers
             m_BoardSize = i_BoardSize;
         }
 
+        public Player getMatchWinner()
+        {
+            return new Player('x', 'x', true, true);
+        }
+
         private void insertPlayerSignToTheBoard(char i_PlayerSign, int i_lineToStart)
         {
             int numberOfRowsToOccupie = m_BoardSize / 2 - 1;

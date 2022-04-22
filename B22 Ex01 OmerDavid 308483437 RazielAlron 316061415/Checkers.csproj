@@ -41,6 +41,7 @@
     <Compile Include="Player.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="ToolSign.cs" />
+    <Compile Include="Enum.cs" />
     <Compile Include="UserInterface.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
