@@ -17,18 +17,15 @@ namespace Checkers
 
         private void insertPlayerSignToTheBoard(char i_PlayerSign, int i_lineToStart)
         {
-            int numberOfRowsToOccupie = m_Board.GetLength(0) / 2 - 1;
-            for (int i = 0; i < numberOfRowsToOccupie; i++)
+            int numberOfRowsToOccupie = (m_Board.GetLength(0) / 2) - 1 + i_lineToStart;
+
+            for (int i = i_lineToStart; i < numberOfRowsToOccupie; i++)
             {
-                for (int j = 0; j < m_Board.GetLength(0); j++)
+                for (int j = 0; j < m_Board.GetLength(1); j++)
                 {
-                    if ((i + j) % 2 == 0)
+                    if (tilesColorCheck(new Point(i, j)))
                     {
-                        m_Board[i + i_lineToStart, j] = '\0';
-                    }
-                    else
-                    {
-                        m_Board[i + i_lineToStart, j] = i_PlayerSign;
+                        m_Board[i, j] = i_PlayerSign;
                     }
                 }
             }
@@ -36,17 +33,17 @@ namespace Checkers
 
         public void InitBoard(ToolSign i_Player1, ToolSign i_Player2)
         {
-            m_Board = new char[6, 6]
-                      { { '\0', '\0', '\0', '\0', '\0', '\0' },
-                        { '\0', '\0', '\0', '\0', '\0', '\0' },
-                        { '\0', 'X', '\0', 'X', '\0', '\0' },
+            /*m_Board = new char[6, 6]
+                      { { '\0', 'K', '\0', '\0', '\0', '\0' },
                         { 'O', '\0', '\0', '\0', '\0', '\0' },
-                        { '\0', '\0', '\0', 'X', '\0', '\0' },
-                        { '\0', '\0', '\0', '\0', 'O', '\0' }
-                      };
+                        { '\0', 'O', '\0', 'O', '\0', '\0' },
+                        { '\0', '\0', '\0', '\0', '\0', '\0' },
+                        { '\0', '\0', '\0', '\0', '\0', '\0' },
+                        { '\0', '\0', '\0', '\0', '\0', '\0' }
+                      };*/
 
-            //insertPlayerSignToTheBoard(i_Player1.m_TrooperSign, this.m_Board.GetLength(0) / 2 + 1);
-            //insertPlayerSignToTheBoard(i_Player2.m_TrooperSign, 0);
+            insertPlayerSignToTheBoard(i_Player1.m_TrooperSign, m_Board.GetLength(0) / 2 + 1);
+            insertPlayerSignToTheBoard(i_Player2.m_TrooperSign, 0);
         }
 
         private Point getCapturedPosition(Point i_Source, Point i_Destination)
@@ -61,9 +58,9 @@ namespace Checkers
         {
             bool isValid = false;
 
-            if (i_point.m_X >= 0 && i_point.m_X < this.m_Board.GetLength(0))
+            if (i_point.m_X >= 0 && i_point.m_X < m_Board.GetLength(0))
             {
-                if (i_point.m_Y >= 0 && i_point.m_Y < this.m_Board.GetLength(0))
+                if (i_point.m_Y >= 0 && i_point.m_Y < m_Board.GetLength(0))
                 {
                     isValid = true;
                 }
@@ -72,7 +69,7 @@ namespace Checkers
             return isValid;
         }
 
-        private bool TilesColorCheck(Point i_point)
+        private bool tilesColorCheck(Point i_point)
         {
             bool isValid = false;
             if ((i_point.m_X + i_point.m_Y) % 2 != 0)
@@ -88,18 +85,17 @@ namespace Checkers
 
             if (!boundariesCheck(i_Source))
             {
-                //Error print - User Interface
                 isInBoundaries = false;
             }
             else if (!boundariesCheck(i_Destination))
             {
                 isInBoundaries = false;
             }
-            else if (!TilesColorCheck(i_Source))
+            else if (!tilesColorCheck(i_Source))
             {
                 isInBoundaries = false;
             }
-            else if (!TilesColorCheck(i_Destination))
+            else if (!tilesColorCheck(i_Destination))
             {
                 isInBoundaries = true;
             }
@@ -297,48 +293,48 @@ namespace Checkers
             return false;
         }
 
-        public static string GetTurnErrorMassage(string i_ErrorMassage)
+        public static string GetTurnErrorMessage(string i_ErrorMassage)
         {
             return String.Format("Error: {0}", i_ErrorMassage);
         }
 
-        public bool ValidateMove(Point i_Source, Point i_Destination, Player i_PlayingPlayer, ref string o_ErrorMassage)
+        public bool ValidateMove(Point i_Source, Point i_Destination, Player i_PlayingPlayer, ref string o_ErrorMessage)
         {
             bool isValid = true;
 
             if (!isInBoundaries(i_Source, i_Destination))
             {
-                o_ErrorMassage = GetTurnErrorMassage("Destination is not in boundaries");
+                o_ErrorMessage = GetTurnErrorMessage("Destination is not in boundaries");
                 isValid = false;
             }
             else if (!distanceCheck(i_Source, i_Destination))
             {
-                o_ErrorMassage = GetTurnErrorMassage("Distance error");
+                o_ErrorMessage = GetTurnErrorMessage("Distance error");
                 isValid = false;
             }
             else if (!isToolOwnedByPlayer(i_PlayingPlayer, i_Source))
             {
-                o_ErrorMassage = GetTurnErrorMassage("The tool is not owned By the player");
+                o_ErrorMessage = GetTurnErrorMessage("The tool is not owned By the player");
                 isValid = false;
             }
             else if(!isMovingForward(i_PlayingPlayer, i_Source, i_Destination))
             {
-                o_ErrorMassage = GetTurnErrorMassage("Tool must move forward");
+                o_ErrorMessage = GetTurnErrorMessage("Tool must move forward");
                 isValid = false;
             }
             else if(!isDestinationOccupied(i_Destination))
             {
-                o_ErrorMassage = GetTurnErrorMassage("Destination position occupied");
+                o_ErrorMessage = GetTurnErrorMessage("Destination position occupied");
                 isValid = false;
             }
             else if(!isCaptureMade(i_Source, i_Destination) && IsJumpedMoreThanOneTile(i_Source, i_Destination))
             {
-                o_ErrorMassage = GetTurnErrorMassage("Invalid jump");
+                o_ErrorMessage = GetTurnErrorMessage("Invalid jump");
                 isValid = false;
             }
             else if(!isCaptureMade(i_Source, i_Destination) && IsPlayerCanCapture(i_PlayingPlayer))
             {
-                o_ErrorMassage = GetTurnErrorMassage("A capture option is available");
+                o_ErrorMessage = GetTurnErrorMessage("A capture option is available");
                 isValid = false;
             }
 
@@ -359,6 +355,7 @@ namespace Checkers
         public void MakeTurn(Point i_Source, Point i_Destination, Player i_PlayingPlayer)
         {
             Point eatenToolPosition;
+            char currentTool = m_Board[i_Source.m_X, i_Source.m_Y];
             m_Board[i_Source.m_X, i_Source.m_Y] = '\0';
 
             if (Math.Abs(i_Source.m_X - i_Destination.m_X) == 2) // A capture performed
@@ -373,7 +370,7 @@ namespace Checkers
             }
             else
             {
-                m_Board[i_Destination.m_X, i_Destination.m_Y] = i_PlayingPlayer.m_ToolSign.m_TrooperSign;
+                m_Board[i_Destination.m_X, i_Destination.m_Y] = currentTool;
             }            
         }
 
@@ -394,18 +391,21 @@ namespace Checkers
         {
             int sumOfPointsOnBoard = 0;
             char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_TrooperSign;
+            int playingPlayerTrooperScore = i_PlayingPlayer.m_ToolSign.m_TrooperScore;
             char playingPlayerKingSign = i_PlayingPlayer.m_ToolSign.m_KingSign;
+            int playingPlayerKingScore = i_PlayingPlayer.m_ToolSign.m_KingScore;
+
             for (int i = 0; i < m_Board.GetLength(0); i++)
             {
                 for (int j = 0; j < m_Board.GetLength(0); j++)
                 {
                     if (m_Board[i, j] == playingPlayerTrooperSign)
                     {
-                        sumOfPointsOnBoard += 1;
+                        sumOfPointsOnBoard += playingPlayerTrooperScore;
                     }
                     else if (m_Board[i, j] == playingPlayerKingSign)
                     {
-                        sumOfPointsOnBoard += 4;
+                        sumOfPointsOnBoard += playingPlayerKingScore;
                     }
                 }
             }

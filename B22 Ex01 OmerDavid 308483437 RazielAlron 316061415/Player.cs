@@ -100,7 +100,9 @@ namespace Checkers
 
         private void appendTurnIfValid(Board i_Board, Turn i_Turn, List<Turn> o_ValidTurns)
         {
-            if (i_Board.ValidateMove(i_Turn.m_Source, i_Turn.m_Destination, this))
+            string errorMessage = "";
+
+            if (i_Board.ValidateMove(i_Turn.m_Source, i_Turn.m_Destination, this, ref errorMessage))
             {
                 o_ValidTurns.Add(i_Turn);
             }
