@@ -12,7 +12,7 @@ namespace Checkers
         private Board m_Board { get; set; }
         private Player m_Player1 { get; set; }
         private Player m_Player2 { get; set; }
-        public Turn m_previousTurn { get; set; } = null;
+        public Turn m_PreviousTurn { get; set; } = null;
 
         public Game() 
         {
@@ -60,27 +60,25 @@ namespace Checkers
 
             isPlayerPlayed = o_currentPlayingPlayer.TryGetTurn(m_Board, ref currentTurn);
 
-            if (isPlayerPlayed)
+            if (isPlayerPlayed
+                && validateCaptureAgain(currentTurn)
+                && m_Board.ValidateMove(currentTurn.m_Source, currentTurn.m_Destination, o_currentPlayingPlayer, ref i_ErrorMessage))
             {
-                if (validateCaptureAgain(currentTurn)
-                    && m_Board.ValidateMove(currentTurn.m_Source, currentTurn.m_Destination, o_currentPlayingPlayer))
+                m_Board.MakeTurn(currentTurn.m_Source, currentTurn.m_Destination, o_currentPlayingPlayer);
+
+                if (!m_Board.IsJumpedMoreThanOneTile(currentTurn.m_Source, currentTurn.m_Destination)
+                    || !m_Board.IsToolCanCapture(o_currentPlayingPlayer, currentTurn.m_Destination))
                 {
-                    m_Board.MakeTurn(currentTurn.m_Source, currentTurn.m_Destination);
-
-                    if (!m_Board.IsJumpedMoreThanOneTile(currentTurn.m_Source, currentTurn.m_Destination)
-                        || !m_Board.IsToolCanCapture(o_currentPlayingPlayer, currentTurn.m_Destination))
-                    {
-                        o_currentPlayingPlayer = switchPlayer(o_currentPlayingPlayer);
-                        currentTurn.m_ShouldCaptureAgain = false;
-                    }
-                    else
-                    {
-                        currentTurn.m_ShouldCaptureAgain = true;
-                    }
-
-                    m_previousTurn = currentTurn;
-                    i_ErrorMessage = "";
+                    o_currentPlayingPlayer = switchPlayer(o_currentPlayingPlayer);
+                    currentTurn.m_ShouldCaptureAgain = false;
                 }
+                else
+                {
+                    currentTurn.m_ShouldCaptureAgain = true;
+                }
+
+                m_PreviousTurn = currentTurn;
+                i_ErrorMessage = "";
             }
 
             return isPlayerPlayed;
@@ -90,14 +88,21 @@ namespace Checkers
         {
             bool isValid = true;
 
-            if (m_previousTurn != null)
+            if (m_PreviousTurn != null && m_PreviousTurn.m_ShouldCaptureAgain)
             {
-                isValid = m_previousTurn.m_ShouldCaptureAgain
-                    && m_previousTurn.m_Destination.m_X == i_CurrentTurn.m_Source.m_X
-                    && m_previousTurn.m_Destination.m_Y == i_CurrentTurn.m_Source.m_Y;
+                isValid = m_PreviousTurn.m_Destination.m_X == i_CurrentTurn.m_Source.m_X
+                    && m_PreviousTurn.m_Destination.m_Y == i_CurrentTurn.m_Source.m_Y;
             }
 
             return isValid;
+        }
+
+        private void PrintState(string i_ErrorMessage)
+        {
+            Ex02.ConsoleUtils.Screen.Clear();
+            UserInterface.PrintBoard(m_Board);
+            UserInterface.PrintErrorMessage(i_ErrorMessage);
+            UserInterface.PrintLastPlay(m_PreviousTurn);
         }
 
         public void Start()
@@ -107,20 +112,15 @@ namespace Checkers
             bool isPlayerPlayed = true;
             string errorMessage = "";
 
-            while (!isMatchOver(currentPlayingPlayer) && isPlayerPlayed)
+            while (!isMatchOver(currentPlayingPlayer, ref matchWinner) && isPlayerPlayed)
             {
-                Ex02.ConsoleUtils.Screen.Clear();
-                UserInterface.PrintBoard(m_Board);
-                UserInterface.PrintErrorMessage(errorMessage);
-                UserInterface.PrintLastPlay(m_previousTurn);
+                PrintState(errorMessage);
                 isPlayerPlayed = tryPlay(ref currentPlayingPlayer, ref errorMessage);
             }
 
-            if (isPlayerPlayed)
-            {
-                matchWinner = getMatchWinner();
-            }
-            else
+            PrintState(errorMessage);
+
+            if (!isPlayerPlayed)
             {
                 matchWinner = switchPlayer(currentPlayingPlayer);
             }
@@ -146,10 +146,11 @@ namespace Checkers
 
             if (i_MatchWinner != null)
             {
-                i_MatchWinner.m_Score++;
+                calculateMatchWinnerScore(i_MatchWinner);
             }
 
             UserInterface.PrintWinnerMatch(i_MatchWinner, lostPlayer);
+            m_PreviousTurn = null;
 
             if (UserInterface.GetUserInputIsRematch())
             {
@@ -163,30 +164,33 @@ namespace Checkers
             }
         }
 
-        private bool isMatchOver(Player i_CurrentPlayingPlayer)
+        private bool isMatchOver(Player i_CurrentPlayingPlayer, ref Player o_Winner)
         {
-            return !m_Board.IsValidMoveExist(i_CurrentPlayingPlayer)
-                || m_Board.SumOfPointsOnBoard(m_Player1) == 0
-                || m_Board.SumOfPointsOnBoard(m_Player2) == 0;
+            bool isOver = false;
+
+            if (!m_Board.IsValidMoveExist(i_CurrentPlayingPlayer))
+            {
+                isOver = true;
+
+                if (!m_Board.IsValidMoveExist(switchPlayer(i_CurrentPlayingPlayer)))
+                {
+                    o_Winner = null;
+                }
+                else
+                {
+                    o_Winner = switchPlayer(i_CurrentPlayingPlayer);
+                }
+            }
+
+            return isOver;
         }
 
-        private Player getMatchWinner()
+        private void calculateMatchWinnerScore(Player i_Winner)
         {
-            Player matchWinner = null;
-            int player1PointsOnBoard = m_Board.SumOfPointsOnBoard(m_Player1);
-            int player2PointsOnBoard = m_Board.SumOfPointsOnBoard(m_Player2);
+            int winnerPointsOnBoard = m_Board.SumOfPointsOnBoard(i_Winner);
+            int loserPointsOnBoard = m_Board.SumOfPointsOnBoard(switchPlayer(i_Winner));
 
-
-            if(player1PointsOnBoard > player2PointsOnBoard)
-            {
-                matchWinner = m_Player1;
-            }
-            else if(player2PointsOnBoard > player1PointsOnBoard)
-            {
-                matchWinner = m_Player2;
-            }
-
-            return matchWinner;
+            i_Winner.m_Score += winnerPointsOnBoard - loserPointsOnBoard;
         }
 
         private Player getGameWinner()

@@ -75,13 +75,14 @@ namespace Checkers
 
             for (int i = 0; i < board.GetLength(0); i++)
             {
-                Console.Write("  {0}  ", columnSign);
+                Console.Write("  {0} ", columnSign);
                 columnSign++;
             }
 
             Console.WriteLine();
-            Console.Write("=");
-            Console.WriteLine(new string('=', board.GetLength(0) * 5));
+            Console.Write(" ");
+            Console.Write(new string('=', board.GetLength(0) * 4));
+            Console.WriteLine("=");
 
             for (int i = 0; i < board.GetLength(0); i++)
             {
@@ -99,12 +100,13 @@ namespace Checkers
                         printedSign = board[i, j];
                     }
 
-                    Console.Write("  {0} |", printedSign);
+                    Console.Write(" {0} |", printedSign);
                 }
 
                 Console.WriteLine();
-                Console.Write("=");
-                Console.WriteLine(new string('=', board.GetLength(0) * 5));
+                Console.Write(" ");
+                Console.Write(new string('=', board.GetLength(0) * 4));
+                Console.WriteLine("=");
             }
         }
 
@@ -193,11 +195,11 @@ namespace Checkers
 
         public static void PrintWinnerGame(Player i_Winner)
         {
-            Console.WriteLine("~~~Game Over~~~");
+            Console.WriteLine("~~~ Game Over ~~~");
 
             if(i_Winner != null)
             {
-                Console.WriteLine("{0} ({1}) Won the Game with {2} wins!", i_Winner.m_PlayerName, i_Winner.m_ToolSign.m_TrooperSign, i_Winner.m_Score);
+                Console.WriteLine("{0} ({1}) Won the Game with score of {2}!", i_Winner.m_PlayerName, i_Winner.m_ToolSign.m_TrooperSign, i_Winner.m_Score);
             }
             else
             {
