@@ -8,6 +8,11 @@ namespace Checkers
 {
     class UserInterface
     {
+        public static void MainMenuMessage()
+        {
+            Console.WriteLine("--- Main Menu ---");
+        }
+
         public static string GetUserInputPlayerName()
         {
             Console.WriteLine("Please enter Player Name: ");
@@ -135,12 +140,14 @@ namespace Checkers
                 || i_UserInputTurn == "Q";
         }
 
-        public static bool TryGetUserInputTurn(Player i_CurrentPlayingPlayer, ref Point o_SourcePosition, ref Point o_DestinationPosition)
+        public static bool TryGetUserInputTurn(Player i_CurrentPlayingPlayer, ref Turn o_Turn)
         {
             string turnInput;
             int pointX = 0, pointY = 0;
+            Point source;
+            Point destination;
 
-            Console.Write("{0} Turn ({1}): ", i_CurrentPlayingPlayer.m_PlayerName, i_CurrentPlayingPlayer.m_ToolSign.m_TrooperSign);
+            PrintWaitForTurn(i_CurrentPlayingPlayer);
             turnInput = Console.ReadLine();
 
             while (!validateInputTurn(turnInput))
@@ -153,28 +160,35 @@ namespace Checkers
             {
                 pointX = (int)(turnInput[1] - 'a');
                 pointY = (int)(turnInput[0] - 'A');
-                o_SourcePosition = new Point(pointX, pointY);
+                source = new Point(pointX, pointY);
 
                 pointX = (int)(turnInput[4] - 'a');
                 pointY = (int)(turnInput[3] - 'A');
-                o_DestinationPosition = new Point(pointX, pointY);
+                destination = new Point(pointX, pointY);
+
+                o_Turn = new Turn(source, destination);
             }
 
             return turnInput != "Q";
         }
 
-        public static void PrintWinnerMatch(Player i_MatchWinner)
+        public static void PrintWinnerMatch(Player i_MatchWinner, Player i_SecondPlayer)
         {
-            Console.WriteLine("~~~Match Over~~~");
+            Console.WriteLine("~~~ Match Over ~~~");
 
             if (i_MatchWinner != null)
             {
-                Console.WriteLine("{0} Won the Match!", i_MatchWinner);
+                Console.WriteLine("{0} Won the Match!", i_MatchWinner.m_PlayerName);
             }
             else
             {
                 Console.WriteLine("It's A TIE!");
             }
+
+            Console.WriteLine("Current Score:");
+            Console.WriteLine("{0} ({1}): {2} - {3} ({4}): {5}",
+                i_MatchWinner.m_PlayerName, i_MatchWinner.m_ToolSign.m_TrooperSign, i_MatchWinner.m_Score,
+                i_SecondPlayer.m_PlayerName, i_SecondPlayer.m_ToolSign.m_TrooperSign, i_SecondPlayer.m_Score);
         }
 
         public static void PrintWinnerGame(Player i_Winner)
@@ -191,9 +205,43 @@ namespace Checkers
             }
         }
 
-        public static void InvalidTurnMessage()
+        public static void PrintLastPlay(Turn i_Turn)
         {
-            Console.WriteLine("Invalid turn made, please enter a valid turn");
+            if (i_Turn != null)
+            {
+                char sourceX = (char)((int)'a' + i_Turn.m_Source.m_X);
+                char sourceY = (char)((int)'A' + i_Turn.m_Source.m_Y);
+                char DestinationX = (char)((int)'a' + i_Turn.m_Destination.m_X);
+                char DestinationY = (char)((int)'A' + i_Turn.m_Destination.m_Y);
+
+                Console.WriteLine("Last Turn: {0}{1}>{2}{3}", sourceY, sourceX, DestinationY, DestinationX);
+            }
+        }
+
+        public static void PrintPCTurn(Turn i_Turn)
+        {
+            if (i_Turn != null)
+            {
+                char sourceX = (char)((int)'a' + i_Turn.m_Source.m_X);
+                char sourceY = (char)((int)'A' + i_Turn.m_Source.m_Y);
+                char DestinationX = (char)((int)'a' + i_Turn.m_Destination.m_X);
+                char DestinationY = (char)((int)'A' + i_Turn.m_Destination.m_Y);
+
+                Console.WriteLine("{0}{1}>{2}{3}", sourceY, sourceX, DestinationY, DestinationX);
+            }
+        }
+
+        public static void PrintWaitForTurn(Player i_CurrentPlayingPlayer)
+        {
+            Console.Write("{0}'s Turn ({1}): ", i_CurrentPlayingPlayer.m_PlayerName, i_CurrentPlayingPlayer.m_ToolSign.m_TrooperSign);
+        }
+
+        public static void PrintErrorMessage(string i_ErrorMessage)
+        {
+            if (i_ErrorMessage.Length > 0)
+            {
+                Console.WriteLine(i_ErrorMessage);
+            }
         }
     }
 }

@@ -39,11 +39,11 @@ namespace Checkers
 
         public void InitBoard(ToolSign i_Player1, ToolSign i_Player2)
         {
-            m_Board = new char[6,6]
+            m_Board = new char[6, 6]
                       { { '\0', '\0', '\0', '\0', '\0', '\0' },
-                        { '\0', 'X', '\0', '\0', '\0', '\0' },
-                        { 'O', '\0', '\0', 'X', '\0', '\0' },
                         { '\0', '\0', '\0', '\0', '\0', '\0' },
+                        { '\0', 'X', '\0', 'X', '\0', '\0' },
+                        { 'O', '\0', '\0', '\0', '\0', '\0' },
                         { '\0', '\0', '\0', 'X', '\0', '\0' },
                         { '\0', '\0', '\0', '\0', 'O', '\0' }
                       };
@@ -122,12 +122,7 @@ namespace Checkers
 
         private bool isDestinationOccupied(Point i_Destination)
         {
-            bool isOccupied = true;
-            if (m_Board[i_Destination.m_X, i_Destination.m_Y] == '\0')
-            {
-                isOccupied = false;
-            }
-            return isOccupied;
+            return m_Board[i_Destination.m_X, i_Destination.m_Y] == '\0';
         }
 
         int directionFactorCalculator(Player i_Player)
@@ -178,8 +173,8 @@ namespace Checkers
             if (Math.Abs(i_Source.m_X - i_Destination.m_X) == 2)
             {
                 eatenToolPosition = getCapturedPosition(i_Source, i_Destination);
-                if (!(m_Board[i_Source.m_X, i_Source.m_Y] == m_Board[eatenToolPosition.m_X, eatenToolPosition.m_Y] ||
-                  m_Board[eatenToolPosition.m_X, eatenToolPosition.m_Y] == '\0'))
+                if (!(m_Board[i_Source.m_X, i_Source.m_Y] == m_Board[eatenToolPosition.m_X, eatenToolPosition.m_Y]
+                    || m_Board[eatenToolPosition.m_X, eatenToolPosition.m_Y] == '\0'))
                 {
                     isCaptureMade = true;
                 }
@@ -286,8 +281,8 @@ namespace Checkers
                 {
                     if (m_Board[i, j] == playingPlayerTrooperSign)
                     {
-                        if (ToolMoovingOptionsCheck(i, j, 1, directionFactor) ||
-                            ToolMoovingOptionsCheck(i, j, 1, directionFactor))
+                        if (ToolMoovingOptionsCheck(i, j, directionFactor, 1) ||
+                            ToolMoovingOptionsCheck(i, j, directionFactor, -1))
                             return true;
                     }
 
@@ -324,6 +319,10 @@ namespace Checkers
                 isValid = false;
             }
             else if(!isMovingForward(i_PlayingPlayer, i_Source, i_Destination))
+            {
+                isValid = false;
+            }
+            else if(!isDestinationOccupied(i_Destination))
             {
                 isValid = false;
             }

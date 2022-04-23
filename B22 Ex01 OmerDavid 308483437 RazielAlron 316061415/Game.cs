@@ -12,6 +12,7 @@ namespace Checkers
         private Board m_Board { get; set; }
         private Player m_Player1 { get; set; }
         private Player m_Player2 { get; set; }
+        public Turn m_previousTurn { get; set; } = null;
 
         public Game() 
         {
@@ -30,6 +31,7 @@ namespace Checkers
             Enum.BoardSize boardSize;
             Enum.PlayerType PlayerType;
 
+            UserInterface.MainMenuMessage();
             playerName = UserInterface.GetUserInputPlayerName();
             m_Player1 = new Player((char)Enum.Player1Tools.Trooper, (char)Enum.Player1Tools.King, Enum.PlayerType.Human, true, playerName);
 
@@ -51,33 +53,51 @@ namespace Checkers
             m_Board.InitBoard(m_Player1.m_ToolSign, m_Player2.m_ToolSign);
         }
 
-        private bool tryPlay(ref Player i_currentPlayingPlayer)
+        private bool tryPlay(ref Player o_currentPlayingPlayer, ref string i_ErrorMessage)
         {
-            Point sourcePosition = new Point(0, 0);
-            Point destinationPosition = new Point(0, 0);
             bool isPlayerPlayed = true;
+            Turn currentTurn = null;
 
-            isPlayerPlayed = i_currentPlayingPlayer.TryGetTurn(ref sourcePosition, ref destinationPosition);
+            isPlayerPlayed = o_currentPlayingPlayer.TryGetTurn(m_Board, ref currentTurn);
 
             if (isPlayerPlayed)
             {
-                if (m_Board.ValidateMove(sourcePosition, destinationPosition, i_currentPlayingPlayer))
+                if (validateCaptureAgain(currentTurn)
+                    && m_Board.ValidateMove(currentTurn.m_Source, currentTurn.m_Destination, o_currentPlayingPlayer))
                 {
-                    m_Board.MakeTurn(sourcePosition, destinationPosition);
+                    m_Board.MakeTurn(currentTurn.m_Source, currentTurn.m_Destination);
 
-                    if (!m_Board.IsJumpedMoreThanOneTile(sourcePosition, destinationPosition)
-                        || !m_Board.IsToolCanCapture(i_currentPlayingPlayer, destinationPosition))
+                    if (!m_Board.IsJumpedMoreThanOneTile(currentTurn.m_Source, currentTurn.m_Destination)
+                        || !m_Board.IsToolCanCapture(o_currentPlayingPlayer, currentTurn.m_Destination))
                     {
-                        i_currentPlayingPlayer = switchPlayer(i_currentPlayingPlayer);
+                        o_currentPlayingPlayer = switchPlayer(o_currentPlayingPlayer);
+                        currentTurn.m_ShouldCaptureAgain = false;
                     }
-                }
-                else
-                {
-                    UserInterface.InvalidTurnMessage();
+                    else
+                    {
+                        currentTurn.m_ShouldCaptureAgain = true;
+                    }
+
+                    m_previousTurn = currentTurn;
+                    i_ErrorMessage = "";
                 }
             }
 
             return isPlayerPlayed;
+        }
+
+        private bool validateCaptureAgain(Turn i_CurrentTurn)
+        {
+            bool isValid = true;
+
+            if (m_previousTurn != null)
+            {
+                isValid = m_previousTurn.m_ShouldCaptureAgain
+                    && m_previousTurn.m_Destination.m_X == i_CurrentTurn.m_Source.m_X
+                    && m_previousTurn.m_Destination.m_Y == i_CurrentTurn.m_Source.m_Y;
+            }
+
+            return isValid;
         }
 
         public void Start()
@@ -85,11 +105,15 @@ namespace Checkers
             Player currentPlayingPlayer = m_Player1;
             Player matchWinner = null;
             bool isPlayerPlayed = true;
+            string errorMessage = "";
 
-            while (isMatchOver() || isPlayerPlayed)
+            while (!isMatchOver(currentPlayingPlayer) && isPlayerPlayed)
             {
+                Ex02.ConsoleUtils.Screen.Clear();
                 UserInterface.PrintBoard(m_Board);
-                isPlayerPlayed = tryPlay(ref currentPlayingPlayer);
+                UserInterface.PrintErrorMessage(errorMessage);
+                UserInterface.PrintLastPlay(m_previousTurn);
+                isPlayerPlayed = tryPlay(ref currentPlayingPlayer, ref errorMessage);
             }
 
             if (isPlayerPlayed)
@@ -118,12 +142,14 @@ namespace Checkers
 
         private void endMatch(Player i_MatchWinner)
         {
-            UserInterface.PrintWinnerMatch(i_MatchWinner);
+            Player lostPlayer = switchPlayer(i_MatchWinner);
 
             if (i_MatchWinner != null)
             {
                 i_MatchWinner.m_Score++;
             }
+
+            UserInterface.PrintWinnerMatch(i_MatchWinner, lostPlayer);
 
             if (UserInterface.GetUserInputIsRematch())
             {
@@ -137,9 +163,9 @@ namespace Checkers
             }
         }
 
-        private bool isMatchOver()
+        private bool isMatchOver(Player i_CurrentPlayingPlayer)
         {
-            return (!m_Board.IsValidMoveExist(m_Player1) && !m_Board.IsValidMoveExist(m_Player2))
+            return !m_Board.IsValidMoveExist(i_CurrentPlayingPlayer)
                 || m_Board.SumOfPointsOnBoard(m_Player1) == 0
                 || m_Board.SumOfPointsOnBoard(m_Player2) == 0;
         }
