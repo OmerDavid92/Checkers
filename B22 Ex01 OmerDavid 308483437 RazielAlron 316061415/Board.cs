@@ -8,9 +8,9 @@ namespace Checkers
 {
     class Board
     {
-        public char[,] m_Board { get; }
+        public char[,] m_Board { get; private set; }
 
-        private int m_BoardSize { get; }
+        private int m_BoardSize { get; set; }
 
         public Board(int i_BoardSize)
         {
@@ -21,26 +21,35 @@ namespace Checkers
         private void insertPlayerSignToTheBoard(char i_PlayerSign, int i_lineToStart)
         {
             int numberOfRowsToOccupie = m_BoardSize / 2 - 1;
-            for (int i = i_lineToStart; i < numberOfRowsToOccupie; i++)
+            for (int i = 0; i < numberOfRowsToOccupie; i++)
             {
                 for (int j = 0; j < m_BoardSize; j++)
                 {
                     if ((i + j) % 2 == 0)
                     {
-                        this.m_Board[i, j] = ' ';
+                        m_Board[i + i_lineToStart, j] = '\0';
                     }
                     else
                     {
-                        this.m_Board[i, j] = i_PlayerSign;
+                        m_Board[i + i_lineToStart, j] = i_PlayerSign;
                     }
                 }
             }
         }
 
-        private void initBoard(ToolSign i_Player1, ToolSign i_Player2)
+        public void InitBoard(ToolSign i_Player1, ToolSign i_Player2)
         {
-            insertPlayerSignToTheBoard(i_Player1.m_trooperSign, 0);
-            insertPlayerSignToTheBoard(i_Player2.m_trooperSign, this.m_BoardSize / 2 + 1);
+            m_Board = new char[6, 6]
+                      { { '\0', '\0', '\0', '\0', '\0', '\0' },
+                        { '\0', '\0', '\0', '\0', '\0', '\0' },
+                        { '\0', 'X', '\0', 'X', '\0', '\0' },
+                        { 'O', '\0', '\0', '\0', '\0', '\0' },
+                        { '\0', '\0', '\0', 'X', '\0', '\0' },
+                        { '\0', '\0', '\0', '\0', 'O', '\0' }
+                      };
+
+            //insertPlayerSignToTheBoard(i_Player1.m_TrooperSign, this.m_BoardSize / 2 + 1);
+            //insertPlayerSignToTheBoard(i_Player2.m_TrooperSign, 0);
         }
 
         private Point getCapturedPosition(Point i_Source, Point i_Destination)
@@ -54,6 +63,7 @@ namespace Checkers
         private bool boundariesCheck(Point i_point)
         {
             bool isValid = false;
+
             if (i_point.m_X >= 0 && i_point.m_X < this.m_BoardSize)
             {
                 if (i_point.m_Y >= 0 && i_point.m_Y < this.m_BoardSize)
@@ -77,89 +87,82 @@ namespace Checkers
         }
         private bool isInBoundaries(Point i_Source, Point i_Destination)
         {
-            bool isInBoundaries = false;
-            if (boundariesCheck(i_Source))
+            bool isInBoundaries = true;
+
+            if (!boundariesCheck(i_Source))
             {
-                if (boundariesCheck(i_Destination))
-                {
-                    if (TilesColorCheck(i_Source))
-                    {
-                        if (TilesColorCheck(i_Destination))
-                        {
-                            isInBoundaries = true;
-                        }
-                    }
-                }
+                //Error print - User Interface
+                isInBoundaries = false;
             }
+            else if (!boundariesCheck(i_Destination))
+            {
+                isInBoundaries = false;
+            }
+            else if (!TilesColorCheck(i_Source))
+            {
+                isInBoundaries = false;
+            }
+            else if (!TilesColorCheck(i_Destination))
+            {
+                isInBoundaries = true;
+            }
+
             return isInBoundaries;
         }
 
         private bool isToolOwnedByPlayer(Player i_Player, Point i_Source)
         {
-            bool isOwnedByPlayer = false;
             int xPos = i_Source.m_X;
             int yPos = i_Source.m_Y;
-            char playerTrooperSign = i_Player.m_ToolSign.m_trooperSign;
-            char playerKingSign = i_Player.m_ToolSign.m_kingSign;
-            if (m_Board[xPos, yPos] == playerTrooperSign || m_Board[xPos, yPos] == playerKingSign)
-            {
-                isOwnedByPlayer = true;
-            }
+            char playerTrooperSign = i_Player.m_ToolSign.m_TrooperSign;
+            char playerKingSign = i_Player.m_ToolSign.m_KingSign;
 
-            return isOwnedByPlayer;
+            return m_Board[xPos, yPos] == playerTrooperSign || m_Board[xPos, yPos] == playerKingSign;
         }
 
         private bool isDestinationOccupied(Point i_Destination)
         {
-            bool isOccupied = true;
-            if (m_Board[i_Destination.m_X, i_Destination.m_Y].CompareTo(" ") == 0)
-            {
-                isOccupied = false;
-            }
-            return isOccupied;
+            return m_Board[i_Destination.m_X, i_Destination.m_Y] == '\0';
         }
 
         int directionFactorCalculator(Player i_Player)
         {
-            int directionFactor = -1;
+            int directionFactor = 1;
             if (i_Player.m_IsMoovingUp)
             {
-                directionFactor = 1;
+                directionFactor = -1;
             }
             return directionFactor;
         }
 
-        private bool isMoovingForward(Player i_PlayingPlayer, Point i_Source, Point i_Destination)
+        private bool distanceCheck(Point i_Source, Point i_Destination)
         {
-            bool isMoovingForward = false;
-            double xColumDifference = Math.Abs(i_Source.m_X - i_Destination.m_X);
+            int xDistance = Math.Abs(i_Source.m_X - i_Destination.m_X);
+            int yDistance = Math.Abs(i_Source.m_Y - i_Destination.m_Y);
+
+            return (xDistance == 1 || xDistance == 2)
+                && (yDistance == 1 || yDistance == 2);
+        }
+
+        private bool isMovingForward(Player i_PlayingPlayer, Point i_Source, Point i_Destination)
+        {
+            bool isMovingForward = true;
             int directionFactor = directionFactorCalculator(i_PlayingPlayer);
 
-            if (xColumDifference < 3 && xColumDifference > 0)
+            if (m_Board[i_Source.m_X, i_Source.m_Y] == i_PlayingPlayer.m_ToolSign.m_TrooperSign)
             {
-                if (xColumDifference == 2)
-                {
-                    directionFactor *= 2;
-                }
-
-                if (!isDestinationOccupied(i_Destination))
-                {
-                    if (i_Source.m_X + directionFactor == i_Destination.m_X)
-                    {
-                        isMoovingForward = true;
-                    }
-                    else if (m_Board[i_Source.m_X, i_Source.m_Y].CompareTo(i_PlayingPlayer.m_ToolSign.m_kingSign) == 0)
-                    {
-                        directionFactor *= -1;
-                        if (i_Source.m_X + directionFactor == i_Destination.m_X)
-                        {
-                            isMoovingForward = true;
-                        }
-                    }
-                }
+                isMovingForward = (i_Destination.m_X - i_Source.m_X) * directionFactor > 0;
             }
 
-            return isMoovingForward;
+            return isMovingForward;
+        }
+
+        public bool IsJumpedMoreThanOneTile(Point i_Source, Point i_Destination)
+        {
+            int xDistance = Math.Abs(i_Source.m_X - i_Destination.m_X);
+            int yDistance = Math.Abs(i_Source.m_Y - i_Destination.m_Y);
+
+            return xDistance > 1 || yDistance > 1;
         }
 
         private bool isCaptureMade(Point i_Source, Point i_Destination)
@@ -170,8 +173,8 @@ namespace Checkers
             if (Math.Abs(i_Source.m_X - i_Destination.m_X) == 2)
             {
                 eatenToolPosition = getCapturedPosition(i_Source, i_Destination);
-                if (!(m_Board[i_Source.m_X, i_Source.m_Y].CompareTo(m_Board[eatenToolPosition.m_X, eatenToolPosition.m_Y]) == 0 ||
-                  m_Board[eatenToolPosition.m_X, eatenToolPosition.m_Y].CompareTo(" ") == 0))
+                if (!(m_Board[i_Source.m_X, i_Source.m_Y] == m_Board[eatenToolPosition.m_X, eatenToolPosition.m_Y]
+                    || m_Board[eatenToolPosition.m_X, eatenToolPosition.m_Y] == '\0'))
                 {
                     isCaptureMade = true;
                 }
@@ -180,7 +183,7 @@ namespace Checkers
             return isCaptureMade;
         }
 
-        private bool ToolCaptureOptionsCheck(int i_SourceXPosition, int i_SourceYPosition, int i_XColumnFactor, int i_YRowFactor)
+        public bool ToolCaptureOptionsCheck(int i_SourceXPosition, int i_SourceYPosition, int i_XColumnFactor, int i_YRowFactor)
         {
             bool captureOptionAvailable = false;
             int xPosOfEatenTool = i_SourceXPosition + i_XColumnFactor;
@@ -190,11 +193,10 @@ namespace Checkers
 
             if (captureToolFutureXPosition >= 0 && captureToolFutureXPosition <= (m_BoardSize - 1) &&
                 captureToolFutureYPosition >= 0 && captureToolFutureYPosition <= (m_BoardSize - 1) &&
-                 m_Board[captureToolFutureXPosition, captureToolFutureYPosition].CompareTo(" ") == 0
-                )
+                 m_Board[captureToolFutureXPosition, captureToolFutureYPosition] == '\0')
             {
-                if (!(m_Board[i_SourceXPosition, i_SourceYPosition].CompareTo(m_Board[xPosOfEatenTool, yPosOfEatenTool]) == 0 ||
-              m_Board[xPosOfEatenTool, yPosOfEatenTool].CompareTo(" ") == 0))
+                if (!(m_Board[i_SourceXPosition, i_SourceYPosition] == m_Board[xPosOfEatenTool, yPosOfEatenTool]
+                    || m_Board[xPosOfEatenTool, yPosOfEatenTool] == '\0'))
                 {
                     captureOptionAvailable = true;
                 }
@@ -211,7 +213,7 @@ namespace Checkers
 
             if (toolFutureXPosition >= 0 && toolFutureXPosition <= (m_BoardSize - 1) &&
                 toolFutureYPosition >= 0 && toolFutureYPosition <= (m_BoardSize - 1) &&
-                m_Board[toolFutureXPosition, toolFutureYPosition].CompareTo(" ") == 0)
+                m_Board[toolFutureXPosition, toolFutureYPosition] == '\0')
             {
                 moovingOptionAvailable = true;
             }
@@ -219,34 +221,48 @@ namespace Checkers
             return moovingOptionAvailable;
         }
 
-
-        private bool isPlayerCanCapture(Player i_PlayingPlayer)
+        public bool IsToolCanCapture(Player i_PlayingPlayer, Point i_SourcePosition)
         {
             int directionFactor = directionFactorCalculator(i_PlayingPlayer);
-            char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_trooperSign;
-            char playingPlayerKingSign = i_PlayingPlayer.m_ToolSign.m_kingSign;
+            char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_TrooperSign;
+            char playingPlayerKingSign = i_PlayingPlayer.m_ToolSign.m_KingSign;
+            char currentTool = m_Board[i_SourcePosition.m_X, i_SourcePosition.m_Y];
+
+            if (currentTool == playingPlayerTrooperSign)
+            {
+                if (ToolCaptureOptionsCheck(i_SourcePosition.m_X, i_SourcePosition.m_Y, directionFactor, 1) ||
+                    ToolCaptureOptionsCheck(i_SourcePosition.m_X, i_SourcePosition.m_Y, directionFactor, -1))
+                {
+                    return true;
+                }
+            }
+            else if(currentTool == playingPlayerKingSign)
+            {
+                if (ToolCaptureOptionsCheck(i_SourcePosition.m_X, i_SourcePosition.m_Y, 1, 1) ||
+                    ToolCaptureOptionsCheck(i_SourcePosition.m_X, i_SourcePosition.m_Y, -1, 1) ||
+                    ToolCaptureOptionsCheck(i_SourcePosition.m_X, i_SourcePosition.m_Y, 1, -1) ||
+                    ToolCaptureOptionsCheck(i_SourcePosition.m_X, i_SourcePosition.m_Y, -1, -1))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+
+        }
+
+        public bool IsPlayerCanCapture(Player i_PlayingPlayer)
+        {
+            int directionFactor = directionFactorCalculator(i_PlayingPlayer);
+            char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_TrooperSign;
+            char playingPlayerKingSign = i_PlayingPlayer.m_ToolSign.m_KingSign;
             for (int i = 0; i < m_BoardSize; i++)
             {
                 for (int j = 0; j < m_BoardSize; j++)
                 {
-                    if (m_Board[i, j].CompareTo(playingPlayerTrooperSign) == 0)
+                    if(IsToolCanCapture(i_PlayingPlayer, new Point(i, j)))
                     {
-                        if (ToolCaptureOptionsCheck(i, j, 1, directionFactor) ||
-                            ToolCaptureOptionsCheck(i, j, -1, directionFactor))
-                        {
-                            return true;
-                        }
-                    }
-
-                    if (m_Board[i, j].CompareTo(playingPlayerKingSign) == 0)
-                    {
-                        if (ToolCaptureOptionsCheck(i, j, 1, 1) ||
-                            ToolCaptureOptionsCheck(i, j, -1, 1) ||
-                            ToolCaptureOptionsCheck(i, j, 1, -1) ||
-                            ToolCaptureOptionsCheck(i, j, -1, -1))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
@@ -257,20 +273,20 @@ namespace Checkers
         private bool isPlayerCanMove(Player i_PlayingPlayer)
         {
             int directionFactor = directionFactorCalculator(i_PlayingPlayer);
-            char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_trooperSign;
-            char playingPlayerKingSign = i_PlayingPlayer.m_ToolSign.m_kingSign;
+            char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_TrooperSign;
+            char playingPlayerKingSign = i_PlayingPlayer.m_ToolSign.m_KingSign;
             for (int i = 0; i < m_BoardSize; i++)
             {
                 for (int j = 0; j < m_BoardSize; j++)
                 {
-                    if (m_Board[i, j].CompareTo(playingPlayerTrooperSign) == 0)
+                    if (m_Board[i, j] == playingPlayerTrooperSign)
                     {
-                        if (ToolMoovingOptionsCheck(i, j, 1, directionFactor) ||
-                            ToolMoovingOptionsCheck(i, j, 1, directionFactor))
+                        if (ToolMoovingOptionsCheck(i, j, directionFactor, 1) ||
+                            ToolMoovingOptionsCheck(i, j, directionFactor, -1))
                             return true;
                     }
 
-                    if (m_Board[i, j].CompareTo(playingPlayerKingSign) == 0)
+                    if (m_Board[i, j] == playingPlayerKingSign)
                     {
                         if (ToolMoovingOptionsCheck(i, j, 1, 1) ||
                             ToolMoovingOptionsCheck(i, j, -1, 1) ||
@@ -285,67 +301,64 @@ namespace Checkers
             return false;
         }
 
-        private bool validateMove(Point i_Source, Point i_Destination, Player i_PlayingPlayer)
+        public bool ValidateMove(Point i_Source, Point i_Destination, Player i_PlayingPlayer)
         {
-            bool isValid = false;
-            if (isInBoundaries(i_Source, i_Destination))
+            bool isValid = true;
+
+            if (!isInBoundaries(i_Source, i_Destination))
             {
-                if (isToolOwnedByPlayer(i_PlayingPlayer, i_Source))
-                {
-                    if (isMoovingForward(i_PlayingPlayer, i_Source, i_Destination))
-                    {
-                        if (isCaptureMade(i_Source, i_Destination))
-                        {
-                            isValid = true;
-                        }
-                        else
-                        {
-                            if (!isPlayerCanCapture(i_PlayingPlayer))
-                            {
-                                isValid = true;
-                            }
-                        }
-                    }
-                }
+                //User interface print error
+                isValid = false;
+            }
+            else if (!distanceCheck(i_Source, i_Destination))
+            {
+                isValid = false;
+            }
+            else if (!isToolOwnedByPlayer(i_PlayingPlayer, i_Source))
+            {
+                isValid = false;
+            }
+            else if(!isMovingForward(i_PlayingPlayer, i_Source, i_Destination))
+            {
+                isValid = false;
+            }
+            else if(!isDestinationOccupied(i_Destination))
+            {
+                isValid = false;
+            }
+            else if(!isCaptureMade(i_Source, i_Destination) && IsJumpedMoreThanOneTile(i_Source, i_Destination))
+            {
+                isValid = false;
+            }
+            else if(!isCaptureMade(i_Source, i_Destination) && IsPlayerCanCapture(i_PlayingPlayer))
+            {
+                isValid = false;
             }
 
             return isValid;
         }
 
-        private void updateBoard(Point i_Source, Point i_Destination)
+        public void MakeTurn(Point i_Source, Point i_Destination)
         {
             Point eatenToolPosition;
             if (Math.Abs(i_Source.m_X - i_Destination.m_X) == 2) // A capture performed
             {
                 eatenToolPosition = getCapturedPosition(i_Source, i_Destination);
-                m_Board[eatenToolPosition.m_X, eatenToolPosition.m_Y] = ' ';
+                m_Board[eatenToolPosition.m_X, eatenToolPosition.m_Y] = '\0';
                 m_Board[i_Destination.m_X, i_Destination.m_Y] = m_Board[i_Source.m_X, i_Source.m_Y];
-                m_Board[i_Source.m_X, i_Source.m_Y] = ' ';
+                m_Board[i_Source.m_X, i_Source.m_Y] = '\0';
             }
             else
             {
                 m_Board[i_Destination.m_X, i_Destination.m_Y] = m_Board[i_Source.m_X, i_Source.m_Y];
-                m_Board[i_Source.m_X, i_Source.m_Y] = ' ';
+                m_Board[i_Source.m_X, i_Source.m_Y] = '\0';
             }
-        }
-
-        public bool MakeTurn(Point i_Source, Point i_Destination, Player i_PlayingPlayer)
-        {
-            bool isTurnPerformed = false;
-
-            if (validateMove(i_Source, i_Destination, i_PlayingPlayer))
-            {
-                updateBoard(i_Source, i_Destination);
-                isTurnPerformed = true;
-            }
-
-            return isTurnPerformed;
         }
 
         public bool IsValidMoveExist(Player i_PlayingPlayer)
         {
             bool isValidMoveExist = false;
-            if (isPlayerCanCapture(i_PlayingPlayer))
+            if (IsPlayerCanCapture(i_PlayingPlayer))
             {
                 isValidMoveExist = true;
             }
@@ -358,17 +371,17 @@ namespace Checkers
         public int SumOfPointsOnBoard(Player i_PlayingPlayer)
         {
             int sumOfPointsOnBoard = 0;
-            char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_trooperSign;
-            char playingPlayerKingSign = i_PlayingPlayer.m_ToolSign.m_kingSign;
+            char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_TrooperSign;
+            char playingPlayerKingSign = i_PlayingPlayer.m_ToolSign.m_KingSign;
             for (int i = 0; i < m_BoardSize; i++)
             {
                 for (int j = 0; j < m_BoardSize; j++)
                 {
-                    if (m_Board[i, j].CompareTo(playingPlayerTrooperSign) == 0)
+                    if (m_Board[i, j] == playingPlayerTrooperSign)
                     {
                         sumOfPointsOnBoard += 1;
                     }
-                    else if (m_Board[i, j].CompareTo(playingPlayerKingSign) == 0)
+                    else if (m_Board[i, j] == playingPlayerKingSign)
                     {
                         sumOfPointsOnBoard += 4;
                     }
