@@ -97,12 +97,20 @@ namespace Checkers
             return isValid;
         }
 
-        private void PrintState(string i_ErrorMessage)
+        private void PrintState(Player i_CurrentPlayingPlayer, string i_ErrorMessage)
         {
+            Player previousPlayer = i_CurrentPlayingPlayer;
+
             Ex02.ConsoleUtils.Screen.Clear();
             UserInterface.PrintBoard(m_Board);
             UserInterface.PrintErrorMessage(i_ErrorMessage);
-            UserInterface.PrintLastPlay(m_PreviousTurn);
+
+            if(m_PreviousTurn != null && !m_PreviousTurn.m_ShouldCaptureAgain)
+            {
+                previousPlayer = switchPlayer(i_CurrentPlayingPlayer);
+            }
+
+            UserInterface.PrintLastPlay(previousPlayer, m_PreviousTurn);
         }
 
         public void Start()
@@ -114,11 +122,11 @@ namespace Checkers
 
             while (!isMatchOver(currentPlayingPlayer, ref matchWinner) && isPlayerPlayed)
             {
-                PrintState(errorMessage);
+                PrintState(currentPlayingPlayer, errorMessage);
                 isPlayerPlayed = tryPlay(ref currentPlayingPlayer, ref errorMessage);
             }
 
-            PrintState(errorMessage);
+            PrintState(currentPlayingPlayer, errorMessage);
 
             if (!isPlayerPlayed)
             {

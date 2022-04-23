@@ -13,10 +13,26 @@ namespace Checkers
             Console.WriteLine("--- Main Menu ---");
         }
 
+        private static bool validatePlayerName(string i_InputPlayerName)
+        {
+            return i_InputPlayerName.Length <= 20
+                || !i_InputPlayerName.Contains(" ");
+        }
+
         public static string GetUserInputPlayerName()
         {
-            Console.WriteLine("Please enter Player Name: ");
-            return Console.ReadLine();
+            string userInput;
+
+            Console.WriteLine("Please enter player name: ");
+            userInput = Console.ReadLine();
+
+            while (!validatePlayerName(userInput))
+            {
+                Console.WriteLine("Invalid player name! (max 20 characters and no spaces)");
+                userInput = Console.ReadLine();
+            }
+
+            return userInput;
         }
 
         private static bool validateInputBoardSize(string i_UserInputBoardSize)
@@ -207,16 +223,18 @@ namespace Checkers
             }
         }
 
-        public static void PrintLastPlay(Turn i_Turn)
+        public static void PrintLastPlay(Player i_CurrentPlayingPlayer, Turn i_Turn)
         {
             if (i_Turn != null)
             {
-                char sourceX = (char)((int)'a' + i_Turn.m_Source.m_X);
-                char sourceY = (char)((int)'A' + i_Turn.m_Source.m_Y);
-                char DestinationX = (char)((int)'a' + i_Turn.m_Destination.m_X);
-                char DestinationY = (char)((int)'A' + i_Turn.m_Destination.m_Y);
+                char sourceX = (char)('a' + i_Turn.m_Source.m_X);
+                char sourceY = (char)('A' + i_Turn.m_Source.m_Y);
+                char DestinationX = (char)('a' + i_Turn.m_Destination.m_X);
+                char DestinationY = (char)('A' + i_Turn.m_Destination.m_Y);
 
-                Console.WriteLine("Last Turn: {0}{1}>{2}{3}", sourceY, sourceX, DestinationY, DestinationX);
+                Console.WriteLine("{0}'s move was ({1}): {2}{3}>{4}{5}",
+                    i_CurrentPlayingPlayer.m_PlayerName, i_CurrentPlayingPlayer.m_ToolSign.m_TrooperSign,
+                    sourceY, sourceX, DestinationY, DestinationX);
             }
         }
 
