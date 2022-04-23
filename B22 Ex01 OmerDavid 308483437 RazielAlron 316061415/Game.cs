@@ -15,7 +15,7 @@ namespace Checkers
 
         public Game() 
         {
-            //gameInit();    
+            InitialGameAndStart();
         }
 
         public void InitialGameAndStart()
@@ -48,9 +48,10 @@ namespace Checkers
             }
 
             m_Player2 = new Player((char)Enum.Player2Tools.Trooper, (char)Enum.Player2Tools.King, PlayerType, false, playerName);
+            m_Board.InitBoard(m_Player1.m_ToolSign, m_Player2.m_ToolSign);
         }
 
-        private bool tryPlay(Player i_currentPlayingPlayer)
+        private bool tryPlay(ref Player i_currentPlayingPlayer)
         {
             Point sourcePosition = new Point(0, 0);
             Point destinationPosition = new Point(0, 0);
@@ -60,11 +61,12 @@ namespace Checkers
 
             if (isPlayerPlayed)
             {
-                if (m_Board.ValidateTurn(sourcePosition, destinationPosition, i_currentPlayingPlayer.m_ToolSign))
+                if (m_Board.ValidateMove(sourcePosition, destinationPosition, i_currentPlayingPlayer))
                 {
-                    m_Board.performTurn(sourcePosition, destinationPosition);
+                    m_Board.MakeTurn(sourcePosition, destinationPosition);
 
-                    if (!m_Board.isPlayerCanCapture(i_currentPlayingPlayer.m_ToolSign, destinationPosition))
+                    if (!m_Board.IsJumpedMoreThanOneTile(sourcePosition, destinationPosition)
+                        || !m_Board.IsToolCanCapture(i_currentPlayingPlayer, destinationPosition))
                     {
                         i_currentPlayingPlayer = switchPlayer(i_currentPlayingPlayer);
                     }
@@ -78,29 +80,28 @@ namespace Checkers
             return isPlayerPlayed;
         }
 
-        private bool isTie()
-        {
-            return true;
-        }
-
         public void Start()
         {
             Player currentPlayingPlayer = m_Player1;
-            Player winner = null;
+            Player matchWinner = null;
+            bool isPlayerPlayed = true;
 
-            while (!isTie() || winner == null)
+            while (isMatchOver() || isPlayerPlayed)
             {
-                if (tryPlay(currentPlayingPlayer))
-                {
-                    winner = m_Board.GetWinner();
-                }
-                else
-                {
-                    winner = switchPlayer(currentPlayingPlayer);
-                }
+                UserInterface.PrintBoard(m_Board);
+                isPlayerPlayed = tryPlay(ref currentPlayingPlayer);
             }
 
-            endMatch(winner);
+            if (isPlayerPlayed)
+            {
+                matchWinner = getMatchWinner();
+            }
+            else
+            {
+                matchWinner = switchPlayer(currentPlayingPlayer);
+            }
+
+            endMatch(matchWinner);
         }
 
         private Player switchPlayer(Player i_CurrentPlayingPlayer)
@@ -126,15 +127,56 @@ namespace Checkers
 
             if (UserInterface.GetUserInputIsRematch())
             {
-                m_Board.init();
+                m_Board.InitBoard(m_Player1.m_ToolSign, m_Player2.m_ToolSign);
                 Start();
             }
             else
             {
-                UserInterface.PrintWinnerGame(m_Player1, m_Player2);
+                UserInterface.PrintWinnerGame(getGameWinner());
                 InitialGameAndStart();
             }
         }
 
+        private bool isMatchOver()
+        {
+            return (!m_Board.IsValidMoveExist(m_Player1) && !m_Board.IsValidMoveExist(m_Player2))
+                || m_Board.SumOfPointsOnBoard(m_Player1) == 0
+                || m_Board.SumOfPointsOnBoard(m_Player2) == 0;
+        }
+
+        private Player getMatchWinner()
+        {
+            Player matchWinner = null;
+            int player1PointsOnBoard = m_Board.SumOfPointsOnBoard(m_Player1);
+            int player2PointsOnBoard = m_Board.SumOfPointsOnBoard(m_Player2);
+
+
+            if(player1PointsOnBoard > player2PointsOnBoard)
+            {
+                matchWinner = m_Player1;
+            }
+            else if(player2PointsOnBoard > player1PointsOnBoard)
+            {
+                matchWinner = m_Player2;
+            }
+
+            return matchWinner;
+        }
+
+        private Player getGameWinner()
+        {
+            Player winner = null;
+
+            if (m_Player1.m_Score > m_Player2.m_Score)
+            {
+                winner = m_Player1;
+            }
+            else if (m_Player2.m_Score > m_Player1.m_Score)
+            {
+                winner = m_Player2;
+            }
+
+            return winner;
+        }
     }
 }

@@ -16,9 +16,9 @@ namespace Checkers
 
         private static bool validateInputBoardSize(string i_UserInputBoardSize)
         {
-            return i_UserInputBoardSize == Enum.BoardSize.Small.ToString()
-                || i_UserInputBoardSize == Enum.BoardSize.Medium.ToString()
-                || i_UserInputBoardSize == Enum.BoardSize.Large.ToString();
+            return i_UserInputBoardSize == ((int)Enum.BoardSize.Small).ToString()
+                || i_UserInputBoardSize == ((int)Enum.BoardSize.Medium).ToString()
+                || i_UserInputBoardSize == ((int)Enum.BoardSize.Large).ToString();
         }
 
         public static Enum.BoardSize GetUserInputBoardSize()
@@ -39,8 +39,8 @@ namespace Checkers
 
         private static bool validateInputPlayerType(string i_UserInputPlayerType)
         {
-            return i_UserInputPlayerType == Enum.PlayerType.Human.ToString()
-                || i_UserInputPlayerType == Enum.PlayerType.PC.ToString();
+            return i_UserInputPlayerType == ((int)Enum.PlayerType.Human).ToString()
+                || i_UserInputPlayerType == ((int)Enum.PlayerType.PC).ToString();
         }
 
         public static Enum.PlayerType GetUserInputPlayerType()
@@ -59,41 +59,47 @@ namespace Checkers
             return (Enum.PlayerType)int.Parse(PlayerType);
         }
 
-        public static void PrintBoard(char[,] i_Board)
+        public static void PrintBoard(Board i_Board)
         {
             char columnSign = 'A';
             char rowSign = 'a';
             char printedSign = '\0';
+            char[,] board = i_Board.m_Board;
 
-            for (int i = 0; i < i_Board.GetLength(0); i++)
+            Console.Write(" ");
+
+            for (int i = 0; i < board.GetLength(0); i++)
             {
                 Console.Write("  {0}  ", columnSign);
                 columnSign++;
             }
 
             Console.WriteLine();
-            Console.WriteLine(new string('=', i_Board.GetLength(0) * 4));
+            Console.Write("=");
+            Console.WriteLine(new string('=', board.GetLength(0) * 5));
 
-            for (int i = 0; i < i_Board.GetLength(0); i++)
+            for (int i = 0; i < board.GetLength(0); i++)
             {
                 Console.Write("{0}|", rowSign);
                 rowSign++;
 
-                for (int j = 0; j < i_Board.GetLength(1); j++)
+                for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    if(i_Board[i, j] == '\0')
+                    if(board[i, j] == '\0')
                     {
                         printedSign = ' ';
                     }
                     else
                     {
-                        printedSign = i_Board[i, j];
+                        printedSign = board[i, j];
                     }
 
                     Console.Write("  {0} |", printedSign);
                 }
 
-                Console.WriteLine(new string('=', i_Board.GetLength(0) * 4));
+                Console.WriteLine();
+                Console.Write("=");
+                Console.WriteLine(new string('=', board.GetLength(0) * 5));
             }
         }
 
@@ -122,10 +128,10 @@ namespace Checkers
         {
             return (i_UserInputTurn.Length == 5
                 && i_UserInputTurn[0] >= 'A' && i_UserInputTurn[0] <= 'Z'
-                && i_UserInputTurn[1] >= 'A' && i_UserInputTurn[1] <= 'Z'
+                && i_UserInputTurn[1] >= 'a' && i_UserInputTurn[1] <= 'z'
                 && i_UserInputTurn[2] == '>'
                 && i_UserInputTurn[3] >= 'A' && i_UserInputTurn[3] <= 'Z'
-                && i_UserInputTurn[4] >= 'A' && i_UserInputTurn[4] <= 'Z')
+                && i_UserInputTurn[4] >= 'a' && i_UserInputTurn[4] <= 'z')
                 || i_UserInputTurn == "Q";
         }
 
@@ -139,18 +145,18 @@ namespace Checkers
 
             while (!validateInputTurn(turnInput))
             {
-                Console.WriteLine("Wrong Input, Please enter y/n");
+                Console.WriteLine("Wrong Input, Please enter turn again");
                 turnInput = Console.ReadLine();
             }
 
             if (turnInput != "Q")
             {
-                pointX = (int)(turnInput[0] - 'A');
-                pointY = (int)(turnInput[1] - 'a');
+                pointX = (int)(turnInput[1] - 'a');
+                pointY = (int)(turnInput[0] - 'A');
                 o_SourcePosition = new Point(pointX, pointY);
 
-                pointX = (int)(turnInput[3] - 'A');
-                pointY = (int)(turnInput[4] - 'a');
+                pointX = (int)(turnInput[4] - 'a');
+                pointY = (int)(turnInput[3] - 'A');
                 o_DestinationPosition = new Point(pointX, pointY);
             }
 
@@ -171,9 +177,23 @@ namespace Checkers
             }
         }
 
-        public static void PrintWinnerGame(Player player1, Player player2)
+        public static void PrintWinnerGame(Player i_Winner)
         {
             Console.WriteLine("~~~Game Over~~~");
+
+            if(i_Winner != null)
+            {
+                Console.WriteLine("{0} ({1}) Won the Game with {2} wins!", i_Winner.m_PlayerName, i_Winner.m_ToolSign.m_TrooperSign, i_Winner.m_Score);
+            }
+            else
+            {
+                Console.WriteLine("It's a TIE!");
+            }
+        }
+
+        public static void InvalidTurnMessage()
+        {
+            Console.WriteLine("Invalid turn made, please enter a valid turn");
         }
     }
 }

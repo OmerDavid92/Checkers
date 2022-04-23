@@ -22,16 +22,20 @@ namespace Checkers
             m_IsMoovingUp = i_IsMoovingUp;
         }
 
-        public void GetTurn(ref Point o_SourcePosition, ref Point o_DestinationPosition)
+        public bool TryGetTurn(ref Point o_SourcePosition, ref Point o_DestinationPosition)
         {
+            bool isPlayerPlayed = true;
+
             if(m_PlayerType == Enum.PlayerType.Human)
             {
-                UserInterface.GetUserInputTurn(m_PlayerName, ref o_SourcePosition, ref o_DestinationPosition);
+                isPlayerPlayed = UserInterface.TryGetUserInputTurn(this, ref o_SourcePosition, ref o_DestinationPosition);
             }
             else
             {
-                this.calculateTurn(o_SourcePosition, o_DestinationPosition);
+                calculateTurn(o_SourcePosition, o_DestinationPosition);
             }
+
+            return isPlayerPlayed;
         }
 
         private void calculateTurn(Point o_SourcePosition, Point o_DestinationPosition)

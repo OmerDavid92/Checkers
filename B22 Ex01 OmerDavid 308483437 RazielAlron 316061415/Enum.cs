@@ -23,8 +23,8 @@ namespace Checkers
         }
         public enum PlayerType
         {
-            Human = 1,
-            PC
+            PC = 1,
+            Human
         }
         public enum Player1Tools
         {
