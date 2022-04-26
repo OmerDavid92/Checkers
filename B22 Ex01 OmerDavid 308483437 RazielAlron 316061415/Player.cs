@@ -8,10 +8,10 @@ namespace Checkers
 {
     class Player
     {
-        public string m_PlayerName { get; }
-        public ToolSign m_ToolSign { get; }
-        public Enum.PlayerType m_PlayerType { get; } //To check if private is needed
-        public bool m_IsMoovingUp { get; }
+        private Enum.PlayerType m_PlayerType;
+        public string m_PlayerName { get; private set; }
+        public ToolSign m_ToolSign { get; private set; }
+        public bool m_IsMoovingUp { get; private set; }
         public int m_Score { get; set; }
 
         public Player(char i_TrooperSign, char i_kingSign, Enum.PlayerType i_PlayerType, bool i_IsMoovingUp, string i_PlayerName = "")

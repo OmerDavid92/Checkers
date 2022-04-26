@@ -8,13 +8,6 @@ namespace Checkers
 {
     public class Enum
     {
-        public enum GameStatus
-        {
-            Player1Wins,
-            Player2Wins,
-            Tie,
-            Playing
-        }
         public enum BoardSize
         {
             Small = 6,

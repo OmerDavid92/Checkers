@@ -97,7 +97,7 @@ namespace Checkers
 
             Console.WriteLine();
             Console.Write(" ");
-            Console.Write(new string('=', board.GetLength(0) * 4));
+            Console.Write(new StringBuilder('=', board.GetLength(0) * 4));
             Console.WriteLine("=");
 
             for (int i = 0; i < board.GetLength(0); i++)
@@ -121,7 +121,7 @@ namespace Checkers
 
                 Console.WriteLine();
                 Console.Write(" ");
-                Console.Write(new string('=', board.GetLength(0) * 4));
+                Console.Write(new StringBuilder('=', board.GetLength(0) * 4));
                 Console.WriteLine("=");
             }
         }

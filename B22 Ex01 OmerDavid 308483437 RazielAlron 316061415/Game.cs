@@ -8,11 +8,10 @@ namespace Checkers
 {
     class Game
     {
-        private Enum.GameStatus m_GameStatus { get; set; }
-        private Board m_Board { get; set; }
-        private Player m_Player1 { get; set; }
-        private Player m_Player2 { get; set; }
-        public Turn m_PreviousTurn { get; set; } = null;
+        private Board m_Board;
+        private Player m_Player1;
+        private Player m_Player2;
+        private Turn m_PreviousTurn = null;
 
         public Game() 
         {
@@ -34,10 +33,8 @@ namespace Checkers
             UserInterface.MainMenuMessage();
             playerName = UserInterface.GetUserInputPlayerName();
             m_Player1 = new Player((char)Enum.Player1Tools.Trooper, (char)Enum.Player1Tools.King, Enum.PlayerType.Human, true, playerName);
-
             boardSize = UserInterface.GetUserInputBoardSize();
             m_Board = new Board((int)boardSize);
-
             PlayerType = UserInterface.GetUserInputPlayerType();
 
             if (PlayerType == Enum.PlayerType.Human)
@@ -180,13 +177,13 @@ namespace Checkers
             {
                 isOver = true;
 
-                if (!m_Board.IsValidMoveExist(switchPlayer(i_CurrentPlayingPlayer)))
+                if (m_Board.IsValidMoveExist(switchPlayer(i_CurrentPlayingPlayer)))
                 {
-                    o_Winner = null;
+                    o_Winner = switchPlayer(i_CurrentPlayingPlayer);
                 }
                 else
                 {
-                    o_Winner = switchPlayer(i_CurrentPlayingPlayer);
+                    o_Winner = null;
                 }
             }
 
