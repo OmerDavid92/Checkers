@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Checkers
+﻿namespace Checkers
 {
-    class Turn
+    public class Turn
     {
         public Point m_Source { get; private set; }
+
         public Point m_Destination { get; private set; }
+
         public bool m_ShouldCaptureAgain { get; set; } = false;
 
         public Turn(Point i_Source, Point i_Destination)

@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Checkers
+﻿namespace Checkers
 {
-    class Player
+    using System;
+    using System.Collections.Generic;
+
+    public class Player
     {
         private Enum.PlayerType m_PlayerType;
+
         public string m_PlayerName { get; private set; }
+
         public ToolSign m_ToolSign { get; private set; }
+
         public bool m_IsMoovingUp { get; private set; }
+
         public int m_Score { get; set; }
 
         public Player(char i_TrooperSign, char i_kingSign, Enum.PlayerType i_PlayerType, bool i_IsMoovingUp, string i_PlayerName = "")
@@ -22,7 +23,7 @@ namespace Checkers
             m_IsMoovingUp = i_IsMoovingUp;
         }
 
-        public bool TryGetTurn(Board i_Board, ref Turn o_Turn)
+        public bool         TryGetTurn(Board i_Board, ref Turn o_Turn)
         {
             bool isPlayerPlayed = true;
 
@@ -41,7 +42,7 @@ namespace Checkers
             return isPlayerPlayed;
         }
 
-        private void calculateTurn(Board i_Board, ref Turn o_Turn)
+        private void        calculateTurn(Board i_Board, ref Turn o_Turn)
         {
             Random random = new Random();
             int randomNumber = 0;
@@ -64,7 +65,7 @@ namespace Checkers
             }
         }
 
-        private List<Turn> getUcapturableTurns(Board i_Board)
+        private List<Turn>  getUcapturableTurns(Board i_Board)
         {
             List<Turn> validTurns = new List<Turn>();
             Point temporarySource;
@@ -81,7 +82,7 @@ namespace Checkers
             return validTurns;
         }
 
-        private List<Turn> getCapturableTurns(Board i_Board)
+        private List<Turn>  getCapturableTurns(Board i_Board)
         {
             List<Turn> validTurns = new List<Turn>();
             Point temporarySource;
@@ -98,9 +99,9 @@ namespace Checkers
             return validTurns;
         }
 
-        private void appendTurnIfValid(Board i_Board, Turn i_Turn, List<Turn> o_ValidTurns)
+        private void        appendTurnIfValid(Board i_Board, Turn i_Turn, List<Turn> o_ValidTurns)
         {
-            string errorMessage = "";
+            string errorMessage = string.Empty;
 
             if (i_Board.ValidateMove(i_Turn.m_Source, i_Turn.m_Destination, this, ref errorMessage))
             {
@@ -108,7 +109,7 @@ namespace Checkers
             }
         }
 
-        private void fillUncapturableTurnsBySourcePoint(Board i_Board, Point i_Source, List<Turn> o_ValidTurns)
+        private void        fillUncapturableTurnsBySourcePoint(Board i_Board, Point i_Source, List<Turn> o_ValidTurns)
         {
             Turn TemporaryTurn = null;
             int moveFactor = getFactor();
@@ -131,7 +132,7 @@ namespace Checkers
             }
         }
 
-        private void fillCapturableTurnsBySourcePoint(Board i_Board, Point i_Source, List<Turn> o_ValidTurns)
+        private void        fillCapturableTurnsBySourcePoint(Board i_Board, Point i_Source, List<Turn> o_ValidTurns)
         {
             Turn TemporaryTurn = null;
             int eatFactor = getFactor() * 2;
@@ -154,7 +155,7 @@ namespace Checkers
             }
         }
 
-        private int getFactor()
+        private int         getFactor()
         {
             int factor = 1;
 

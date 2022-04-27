@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Checkers
+﻿namespace Checkers
 {
-    class ToolSign
+    public class ToolSign
     {
         public char m_TrooperSign { get; private set; }
+
         public int m_TrooperScore { get; } = 1;
+
         public char m_KingSign { get; private set; }
+
         public int m_KingScore { get; } = 4;
 
         public ToolSign(char i_trooperSign, char i_KingSign)
@@ -18,6 +15,5 @@ namespace Checkers
             m_TrooperSign = i_trooperSign;
             m_KingSign = i_KingSign;
         }
-
     }
 }
