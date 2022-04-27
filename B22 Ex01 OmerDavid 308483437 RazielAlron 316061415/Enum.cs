@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Checkers
+﻿namespace Checkers
 {
     public class Enum
     {
@@ -14,16 +8,19 @@ namespace Checkers
             Medium = 8,
             Large = 10
         }
+
         public enum PlayerType
         {
             PC = 1,
             Human
         }
+
         public enum Player1Tools
         {
             Trooper = 'O',
             King = 'U'
         }
+
         public enum Player2Tools
         {
             Trooper = 'X',

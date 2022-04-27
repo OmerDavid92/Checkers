@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Checkers
+﻿namespace Checkers
 {
-    class Game
+    public class Game
     {
         private Board m_Board;
         private Player m_Player1;
@@ -18,13 +12,13 @@ namespace Checkers
             InitialGameAndStart();
         }
 
-        public void InitialGameAndStart()
+        public void    InitialGameAndStart()
         {
             InitialGame();
             Start();
         }
 
-        public void InitialGame()
+        public void    InitialGame()
         {
             string playerName;
             Enum.BoardSize boardSize;
@@ -50,7 +44,30 @@ namespace Checkers
             m_Board.InitBoard(m_Player1.m_ToolSign, m_Player2.m_ToolSign);
         }
 
-        private bool tryPlay(ref Player o_currentPlayingPlayer, ref string i_ErrorMessage)
+        public void    Start()
+        {
+            Player currentPlayingPlayer = m_Player1;
+            Player matchWinner = null;
+            bool isPlayerPlayed = true;
+            string errorMessage = string.Empty;
+
+            while (!isMatchOver(currentPlayingPlayer, ref matchWinner) && isPlayerPlayed)
+            {
+                printState(currentPlayingPlayer, errorMessage);
+                isPlayerPlayed = tryPlay(ref currentPlayingPlayer, ref errorMessage);
+            }
+
+            printState(currentPlayingPlayer, errorMessage);
+
+            if (!isPlayerPlayed)
+            {
+                matchWinner = switchPlayer(currentPlayingPlayer);
+            }
+
+            endMatch(matchWinner);
+        }
+
+        private bool   tryPlay(ref Player o_currentPlayingPlayer, ref string i_ErrorMessage)
         {
             bool isPlayerPlayed = true;
             Turn currentTurn = null;
@@ -75,13 +92,13 @@ namespace Checkers
                 }
 
                 m_PreviousTurn = currentTurn;
-                i_ErrorMessage = "";
+                i_ErrorMessage = string.Empty;
             }
 
             return isPlayerPlayed;
         }
 
-        private bool validateCaptureAgain(Turn i_CurrentTurn)
+        private bool   validateCaptureAgain(Turn i_CurrentTurn)
         {
             bool isValid = true;
 
@@ -94,7 +111,7 @@ namespace Checkers
             return isValid;
         }
 
-        private void PrintState(Player i_CurrentPlayingPlayer, string i_ErrorMessage)
+        private void   printState(Player i_CurrentPlayingPlayer, string i_ErrorMessage)
         {
             Player previousPlayer = i_CurrentPlayingPlayer;
 
@@ -110,29 +127,6 @@ namespace Checkers
             UserInterface.PrintLastPlay(previousPlayer, m_PreviousTurn);
         }
 
-        public void Start()
-        {
-            Player currentPlayingPlayer = m_Player1;
-            Player matchWinner = null;
-            bool isPlayerPlayed = true;
-            string errorMessage = "";
-
-            while (!isMatchOver(currentPlayingPlayer, ref matchWinner) && isPlayerPlayed)
-            {
-                PrintState(currentPlayingPlayer, errorMessage);
-                isPlayerPlayed = tryPlay(ref currentPlayingPlayer, ref errorMessage);
-            }
-
-            PrintState(currentPlayingPlayer, errorMessage);
-
-            if (!isPlayerPlayed)
-            {
-                matchWinner = switchPlayer(currentPlayingPlayer);
-            }
-
-            endMatch(matchWinner);
-        }
-
         private Player switchPlayer(Player i_CurrentPlayingPlayer)
         {
             Player nextPlayingPlayer = m_Player1;
@@ -145,7 +139,7 @@ namespace Checkers
             return nextPlayingPlayer;
         }
 
-        private void endMatch(Player i_MatchWinner)
+        private void   endMatch(Player i_MatchWinner)
         {
             Player lostPlayer = switchPlayer(i_MatchWinner);
 
@@ -169,7 +163,7 @@ namespace Checkers
             }
         }
 
-        private bool isMatchOver(Player i_CurrentPlayingPlayer, ref Player o_Winner)
+        private bool   isMatchOver(Player i_CurrentPlayingPlayer, ref Player o_Winner)
         {
             bool isOver = false;
 
@@ -190,7 +184,7 @@ namespace Checkers
             return isOver;
         }
 
-        private void calculateMatchWinnerScore(Player i_Winner)
+        private void   calculateMatchWinnerScore(Player i_Winner)
         {
             int winnerPointsOnBoard = m_Board.SumOfPointsOnBoard(i_Winner);
             int loserPointsOnBoard = m_Board.SumOfPointsOnBoard(switchPlayer(i_Winner));

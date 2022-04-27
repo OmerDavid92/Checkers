@@ -1,25 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Checkers
+﻿namespace Checkers
 {
-    class UserInterface
+    using System;
+
+    public class UserInterface
     {
-        public static void MainMenuMessage()
+        public static void            MainMenuMessage()
         {
             Console.WriteLine("--- Main Menu ---");
         }
 
-        private static bool validatePlayerName(string i_InputPlayerName)
-        {
-            return i_InputPlayerName.Length <= 20
-                || !i_InputPlayerName.Contains(" ");
-        }
-
-        public static string GetUserInputPlayerName()
+        public static string          GetUserInputPlayerName()
         {
             string userInput;
 
@@ -35,14 +25,7 @@ namespace Checkers
             return userInput;
         }
 
-        private static bool validateInputBoardSize(string i_UserInputBoardSize)
-        {
-            return i_UserInputBoardSize == ((int)Enum.BoardSize.Small).ToString()
-                || i_UserInputBoardSize == ((int)Enum.BoardSize.Medium).ToString()
-                || i_UserInputBoardSize == ((int)Enum.BoardSize.Large).ToString();
-        }
-
-        public static Enum.BoardSize GetUserInputBoardSize()
+        public static Enum.BoardSize  GetUserInputBoardSize()
         {
             string i_UserInputBoardSize;
 
@@ -56,12 +39,6 @@ namespace Checkers
             }
 
             return (Enum.BoardSize)int.Parse(i_UserInputBoardSize);
-        }
-
-        private static bool validateInputPlayerType(string i_UserInputPlayerType)
-        {
-            return i_UserInputPlayerType == ((int)Enum.PlayerType.Human).ToString()
-                || i_UserInputPlayerType == ((int)Enum.PlayerType.PC).ToString();
         }
 
         public static Enum.PlayerType GetUserInputPlayerType()
@@ -80,7 +57,7 @@ namespace Checkers
             return (Enum.PlayerType)int.Parse(PlayerType);
         }
 
-        public static void PrintBoard(Board i_Board)
+        public static void            PrintBoard(Board i_Board)
         {
             char columnSign = 'A';
             char rowSign = 'a';
@@ -97,7 +74,7 @@ namespace Checkers
 
             Console.WriteLine();
             Console.Write(" ");
-            Console.Write(new StringBuilder('=', board.GetLength(0) * 4));
+            Console.Write(new string('=', board.GetLength(0) * 4));
             Console.WriteLine("=");
 
             for (int i = 0; i < board.GetLength(0); i++)
@@ -121,17 +98,12 @@ namespace Checkers
 
                 Console.WriteLine();
                 Console.Write(" ");
-                Console.Write(new StringBuilder('=', board.GetLength(0) * 4));
+                Console.Write(new string('=', board.GetLength(0) * 4));
                 Console.WriteLine("=");
             }
-        }
+        }        
 
-        private static bool validateInputRematch(string i_UserInputRematch)
-        {
-            return i_UserInputRematch == "y" || i_UserInputRematch == "n";
-        }
-
-        public static bool GetUserInputIsRematch()
+        public static bool            GetUserInputIsRematch()
         {
             string rematchInput;
 
@@ -147,18 +119,7 @@ namespace Checkers
             return rematchInput == "y";
         }
 
-        private static bool validateInputTurn(string i_UserInputTurn)
-        {
-            return (i_UserInputTurn.Length == 5
-                && i_UserInputTurn[0] >= 'A' && i_UserInputTurn[0] <= 'Z'
-                && i_UserInputTurn[1] >= 'a' && i_UserInputTurn[1] <= 'z'
-                && i_UserInputTurn[2] == '>'
-                && i_UserInputTurn[3] >= 'A' && i_UserInputTurn[3] <= 'Z'
-                && i_UserInputTurn[4] >= 'a' && i_UserInputTurn[4] <= 'z')
-                || i_UserInputTurn == "Q";
-        }
-
-        public static bool TryGetUserInputTurn(Player i_CurrentPlayingPlayer, ref Turn o_Turn)
+        public static bool            TryGetUserInputTurn(Player i_CurrentPlayingPlayer, ref Turn o_Turn)
         {
             string turnInput;
             int pointX = 0, pointY = 0;
@@ -190,7 +151,7 @@ namespace Checkers
             return turnInput != "Q";
         }
 
-        public static void PrintWinnerMatch(Player i_MatchWinner, Player i_SecondPlayer)
+        public static void            PrintWinnerMatch(Player i_MatchWinner, Player i_SecondPlayer)
         {
             Console.WriteLine("~~~ Match Over ~~~");
 
@@ -204,12 +165,17 @@ namespace Checkers
             }
 
             Console.WriteLine("Current Score:");
-            Console.WriteLine("{0} ({1}): {2} - {3} ({4}): {5}",
-                i_MatchWinner.m_PlayerName, i_MatchWinner.m_ToolSign.m_TrooperSign, i_MatchWinner.m_Score,
-                i_SecondPlayer.m_PlayerName, i_SecondPlayer.m_ToolSign.m_TrooperSign, i_SecondPlayer.m_Score);
+            Console.WriteLine(
+                "{0} ({1}): {2} - {3} ({4}): {5}",
+                i_MatchWinner.m_PlayerName,
+                i_MatchWinner.m_ToolSign.m_TrooperSign,
+                i_MatchWinner.m_Score,
+                i_SecondPlayer.m_PlayerName,
+                i_SecondPlayer.m_ToolSign.m_TrooperSign,
+                i_SecondPlayer.m_Score);
         }
 
-        public static void PrintWinnerGame(Player i_Winner)
+        public static void            PrintWinnerGame(Player i_Winner)
         {
             Console.WriteLine("~~~ Game Over ~~~");
 
@@ -223,7 +189,7 @@ namespace Checkers
             }
         }
 
-        public static void PrintLastPlay(Player i_CurrentPlayingPlayer, Turn i_Turn)
+        public static void            PrintLastPlay(Player i_CurrentPlayingPlayer, Turn i_Turn)
         {
             if (i_Turn != null)
             {
@@ -232,13 +198,18 @@ namespace Checkers
                 char DestinationX = (char)('a' + i_Turn.m_Destination.m_X);
                 char DestinationY = (char)('A' + i_Turn.m_Destination.m_Y);
 
-                Console.WriteLine("{0}'s move was ({1}): {2}{3}>{4}{5}",
-                    i_CurrentPlayingPlayer.m_PlayerName, i_CurrentPlayingPlayer.m_ToolSign.m_TrooperSign,
-                    sourceY, sourceX, DestinationY, DestinationX);
+                Console.WriteLine(
+                    "{0}'s move was ({1}): {2}{3}>{4}{5}",
+                    i_CurrentPlayingPlayer.m_PlayerName,
+                    i_CurrentPlayingPlayer.m_ToolSign.m_TrooperSign,
+                    sourceY,
+                    sourceX,
+                    DestinationY,
+                    DestinationX);
             }
         }
 
-        public static void PrintPCTurn(Turn i_Turn)
+        public static void            PrintPCTurn(Turn i_Turn)
         {
             if (i_Turn != null)
             {
@@ -251,17 +222,52 @@ namespace Checkers
             }
         }
 
-        public static void PrintWaitForTurn(Player i_CurrentPlayingPlayer)
+        public static void            PrintWaitForTurn(Player i_CurrentPlayingPlayer)
         {
             Console.Write("{0}'s Turn ({1}): ", i_CurrentPlayingPlayer.m_PlayerName, i_CurrentPlayingPlayer.m_ToolSign.m_TrooperSign);
         }
 
-        public static void PrintErrorMessage(string i_ErrorMessage)
+        public static void            PrintErrorMessage(string i_ErrorMessage)
         {
             if (i_ErrorMessage.Length > 0)
             {
                 Console.WriteLine(i_ErrorMessage);
             }
+        }
+
+        private static bool           validatePlayerName(string i_InputPlayerName)
+        {
+            return i_InputPlayerName.Length <= 20
+                || !i_InputPlayerName.Contains(" ");
+        }
+
+        private static bool           validateInputBoardSize(string i_UserInputBoardSize)
+        {
+            return i_UserInputBoardSize == ((int)Enum.BoardSize.Small).ToString()
+                || i_UserInputBoardSize == ((int)Enum.BoardSize.Medium).ToString()
+                || i_UserInputBoardSize == ((int)Enum.BoardSize.Large).ToString();
+        }
+
+        private static bool           validateInputRematch(string i_UserInputRematch)
+        {
+            return i_UserInputRematch == "y" || i_UserInputRematch == "n";
+        }
+
+        private static bool           validateInputTurn(string i_UserInputTurn)
+        {
+            return (i_UserInputTurn.Length == 5
+                && i_UserInputTurn[0] >= 'A' && i_UserInputTurn[0] <= 'Z'
+                && i_UserInputTurn[1] >= 'a' && i_UserInputTurn[1] <= 'z'
+                && i_UserInputTurn[2] == '>'
+                && i_UserInputTurn[3] >= 'A' && i_UserInputTurn[3] <= 'Z'
+                && i_UserInputTurn[4] >= 'a' && i_UserInputTurn[4] <= 'z')
+                || i_UserInputTurn == "Q";
+        }
+
+        private static bool           validateInputPlayerType(string i_UserInputPlayerType)
+        {
+            return i_UserInputPlayerType == ((int)Enum.PlayerType.Human).ToString()
+                || i_UserInputPlayerType == ((int)Enum.PlayerType.PC).ToString();
         }
     }
 }
