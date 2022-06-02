@@ -30,9 +30,9 @@ namespace CheckersForm
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.BoardSizeRadioButton = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.RadioButtonBoardSize6X6 = new System.Windows.Forms.RadioButton();
+            this.RadioButtonBoardSize8X8 = new System.Windows.Forms.RadioButton();
+            this.RadioButtonBoardSize10X10 = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.Player2CheckBox = new System.Windows.Forms.CheckBox();
@@ -49,39 +49,38 @@ namespace CheckersForm
             this.label1.Size = new System.Drawing.Size(91, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "Board Size:";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
-            // BoardSizeRadioButton
+            // RadioButtonBoardSize6X6
             // 
-            this.BoardSizeRadioButton.AutoSize = true;
-            this.BoardSizeRadioButton.Checked = true;
-            this.BoardSizeRadioButton.Location = new System.Drawing.Point(35, 46);
-            this.BoardSizeRadioButton.Name = "BoardSizeRadioButton";
-            this.BoardSizeRadioButton.Size = new System.Drawing.Size(67, 24);
-            this.BoardSizeRadioButton.TabIndex = 1;
-            this.BoardSizeRadioButton.TabStop = true;
-            this.BoardSizeRadioButton.Text = "6 x 6";
-            this.BoardSizeRadioButton.UseVisualStyleBackColor = true;
+            this.RadioButtonBoardSize6X6.AutoSize = true;
+            this.RadioButtonBoardSize6X6.Checked = true;
+            this.RadioButtonBoardSize6X6.Location = new System.Drawing.Point(35, 46);
+            this.RadioButtonBoardSize6X6.Name = "RadioButtonBoardSize6X6";
+            this.RadioButtonBoardSize6X6.Size = new System.Drawing.Size(67, 24);
+            this.RadioButtonBoardSize6X6.TabIndex = 1;
+            this.RadioButtonBoardSize6X6.TabStop = true;
+            this.RadioButtonBoardSize6X6.Text = "6 x 6";
+            this.RadioButtonBoardSize6X6.UseVisualStyleBackColor = true;
             // 
-            // radioButton1
+            // RadioButtonBoardSize8X8
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(129, 46);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(67, 24);
-            this.radioButton1.TabIndex = 2;
-            this.radioButton1.Text = "8 x 8";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.RadioButtonBoardSize8X8.AutoSize = true;
+            this.RadioButtonBoardSize8X8.Location = new System.Drawing.Point(129, 46);
+            this.RadioButtonBoardSize8X8.Name = "RadioButtonBoardSize8X8";
+            this.RadioButtonBoardSize8X8.Size = new System.Drawing.Size(67, 24);
+            this.RadioButtonBoardSize8X8.TabIndex = 2;
+            this.RadioButtonBoardSize8X8.Text = "8 x 8";
+            this.RadioButtonBoardSize8X8.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // RadioButtonBoardSize10X10
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(232, 46);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(85, 24);
-            this.radioButton2.TabIndex = 3;
-            this.radioButton2.Text = "10 x 10";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.RadioButtonBoardSize10X10.AutoSize = true;
+            this.RadioButtonBoardSize10X10.Location = new System.Drawing.Point(232, 46);
+            this.RadioButtonBoardSize10X10.Name = "RadioButtonBoardSize10X10";
+            this.RadioButtonBoardSize10X10.Size = new System.Drawing.Size(85, 24);
+            this.RadioButtonBoardSize10X10.TabIndex = 3;
+            this.RadioButtonBoardSize10X10.Text = "10 x 10";
+            this.RadioButtonBoardSize10X10.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
@@ -92,7 +91,6 @@ namespace CheckersForm
             this.label2.Size = new System.Drawing.Size(64, 20);
             this.label2.TabIndex = 4;
             this.label2.Text = "Players:";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label3
             // 
@@ -113,7 +111,6 @@ namespace CheckersForm
             this.Player2CheckBox.TabIndex = 6;
             this.Player2CheckBox.Text = "Player 2:";
             this.Player2CheckBox.UseVisualStyleBackColor = true;
-            this.Player2CheckBox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // DoneButton
             // 
@@ -123,6 +120,7 @@ namespace CheckersForm
             this.DoneButton.TabIndex = 7;
             this.DoneButton.Text = "Done";
             this.DoneButton.UseVisualStyleBackColor = true;
+            this.DoneButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.submitSettings);
             // 
             // Player1
             // 
@@ -152,9 +150,9 @@ namespace CheckersForm
             this.Controls.Add(this.Player2CheckBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.radioButton2);
-            this.Controls.Add(this.radioButton1);
-            this.Controls.Add(this.BoardSizeRadioButton);
+            this.Controls.Add(this.RadioButtonBoardSize10X10);
+            this.Controls.Add(this.RadioButtonBoardSize8X8);
+            this.Controls.Add(this.RadioButtonBoardSize6X6);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
@@ -163,7 +161,6 @@ namespace CheckersForm
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Game Settings";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -172,9 +169,9 @@ namespace CheckersForm
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.RadioButton BoardSizeRadioButton;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton RadioButtonBoardSize6X6;
+        private System.Windows.Forms.RadioButton RadioButtonBoardSize8X8;
+        private System.Windows.Forms.RadioButton RadioButtonBoardSize10X10;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox Player2CheckBox;
