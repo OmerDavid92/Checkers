@@ -4,20 +4,20 @@
     
     public class Board
     {
-        public                Board(int i_BoardSize)
+        public Board(int i_BoardSize)
         {
             m_Board = new char[i_BoardSize, i_BoardSize];
         }
         
         public char[,] m_Board { get; private set; }
 
-        public void           InitBoard(ToolSign i_Player1, ToolSign i_Player2)
+        public void InitBoard(ToolSign i_Player1, ToolSign i_Player2)
         {
             insertPlayerSignToTheBoard(i_Player1.m_TrooperSign, (m_Board.GetLength(0) / 2) + 1);
             insertPlayerSignToTheBoard(i_Player2.m_TrooperSign, 0);
         }
 
-        public void           MakeTurn(Point i_Source, Point i_Destination, Player i_PlayingPlayer)
+        public void MakeTurn(Point i_Source, Point i_Destination, Player i_PlayingPlayer)
         {
             Point eatenToolPosition;
             char currentTool = m_Board[i_Source.m_X, i_Source.m_Y];
@@ -39,7 +39,7 @@
             }
         }
 
-        public bool           IsValidMoveExist(Player i_PlayingPlayer)
+        public bool IsValidMoveExist(Player i_PlayingPlayer)
         {
             bool isValidMoveExist = false;
 
@@ -55,7 +55,7 @@
             return isValidMoveExist;
         }
 
-        public int            SumOfPointsOnBoard(Player i_PlayingPlayer)
+        public int SumOfPointsOnBoard(Player i_PlayingPlayer)
         {
             int sumOfPointsOnBoard = 0;
             char playingPlayerTrooperSign = i_PlayingPlayer.m_ToolSign.m_TrooperSign;
@@ -81,7 +81,7 @@
             return sumOfPointsOnBoard;
         }
 
-        public bool           IsJumpedMoreThanOneTile(Point i_Source, Point i_Destination)
+        public bool IsJumpedMoreThanOneTile(Point i_Source, Point i_Destination)
         {
             int xDistance = Math.Abs(i_Source.m_X - i_Destination.m_X);
             int yDistance = Math.Abs(i_Source.m_Y - i_Destination.m_Y);
@@ -89,7 +89,7 @@
             return xDistance > 1 || yDistance > 1;
         }
 
-        public bool           ToolCaptureOptionsCheck(int i_SourceXPosition, int i_SourceYPosition, int i_XColumnFactor, int i_YRowFactor, ToolSign i_PlayerToolSign)
+        public bool ToolCaptureOptionsCheck(int i_SourceXPosition, int i_SourceYPosition, int i_XColumnFactor, int i_YRowFactor, ToolSign i_PlayerToolSign)
         {
             bool captureOptionAvailable = false;
             int xPosOfEatenTool = i_SourceXPosition + i_XColumnFactor;
@@ -112,7 +112,7 @@
             return captureOptionAvailable;
         }
 
-        public bool           IsToolCanCapture(Player i_PlayingPlayer, Point i_SourcePosition)
+        public bool IsToolCanCapture(Player i_PlayingPlayer, Point i_SourcePosition)
         {
             bool canCapture = false;
             int directionFactor = directionFactorCalculator(i_PlayingPlayer);
@@ -142,7 +142,7 @@
             return canCapture;
         }
 
-        public bool           IsPlayerCanCapture(Player i_PlayingPlayer)
+        public bool IsPlayerCanCapture(Player i_PlayingPlayer)
         {
             bool canCapture = false;
             int directionFactor = directionFactorCalculator(i_PlayingPlayer);
@@ -163,7 +163,7 @@
             return canCapture;
         }
 
-        public bool           ValidateMove(Point i_Source, Point i_Destination, Player i_PlayingPlayer, ref string o_ErrorMessage)
+        public bool ValidateMove(Point i_Source, Point i_Destination, Player i_PlayingPlayer, ref string o_ErrorMessage)
         {
             bool isValid = true;
 
@@ -211,7 +211,7 @@
             return string.Format("Error: {0}", i_ErrorMassage);
         }
 
-        private Point         getCapturedPosition(Point i_Source, Point i_Destination)
+        private Point getCapturedPosition(Point i_Source, Point i_Destination)
         {
             Point eatenToolPosition = new Point();
             eatenToolPosition.m_X = ((i_Destination.m_X - i_Source.m_X) / 2) + i_Source.m_X;
@@ -220,7 +220,7 @@
             return eatenToolPosition;
         }
 
-        private void          insertPlayerSignToTheBoard(char i_PlayerSign, int i_lineToStart)
+        private void insertPlayerSignToTheBoard(char i_PlayerSign, int i_lineToStart)
         {
             int numberOfRowsToOccupie = (m_Board.GetLength(0) / 2) - 1 + i_lineToStart;
 
@@ -236,13 +236,13 @@
             }
         }
 
-        private bool          boundariesCheck(Point i_point)
+        private bool boundariesCheck(Point i_point)
         {
             return i_point.m_X >= 0 && i_point.m_X < m_Board.GetLength(0)
                 && i_point.m_Y >= 0 && i_point.m_Y < m_Board.GetLength(1);
         }
 
-        private bool          tilesColorCheck(Point i_point)
+        private bool tilesColorCheck(Point i_point)
         {
             bool isValid = false;
 
@@ -254,7 +254,7 @@
             return isValid;
         }
 
-        private bool          isInBoundaries(Point i_Source, Point i_Destination)
+        private bool isInBoundaries(Point i_Source, Point i_Destination)
         {
             bool isInBoundaries = true;
 
@@ -278,7 +278,7 @@
             return isInBoundaries;
         }
 
-        private bool          isToolOwnedByPlayer(Player i_Player, Point i_Source)
+        private bool isToolOwnedByPlayer(Player i_Player, Point i_Source)
         {
             int xPos = i_Source.m_X;
             int yPos = i_Source.m_Y;
@@ -288,12 +288,12 @@
             return m_Board[xPos, yPos] == playerTrooperSign || m_Board[xPos, yPos] == playerKingSign;
         }
 
-        private bool          isDestinationOccupied(Point i_Destination)
+        private bool isDestinationOccupied(Point i_Destination)
         {
             return m_Board[i_Destination.m_X, i_Destination.m_Y] == '\0';
         }
 
-        private int           directionFactorCalculator(Player i_Player)
+        private int directionFactorCalculator(Player i_Player)
         {
             int directionFactor = 1;
 
@@ -305,7 +305,7 @@
             return directionFactor;
         }
 
-        private bool          distanceCheck(Point i_Source, Point i_Destination)
+        private bool distanceCheck(Point i_Source, Point i_Destination)
         {
             int xDistance = Math.Abs(i_Source.m_X - i_Destination.m_X);
             int yDistance = Math.Abs(i_Source.m_Y - i_Destination.m_Y);
@@ -314,7 +314,7 @@
                 && (yDistance == 1 || yDistance == 2);
         }
 
-        private bool          isMovingForward(Player i_PlayingPlayer, Point i_Source, Point i_Destination)
+        private bool isMovingForward(Player i_PlayingPlayer, Point i_Source, Point i_Destination)
         {
             bool isMovingForward = true;
             int directionFactor = directionFactorCalculator(i_PlayingPlayer);
@@ -327,7 +327,7 @@
             return isMovingForward;
         }
 
-        private bool          isCaptureMade(Point i_Source, Point i_Destination, ToolSign i_PlayerToolSign)
+        private bool isCaptureMade(Point i_Source, Point i_Destination, ToolSign i_PlayerToolSign)
         {
             bool isCaptureMade = false;
             Point eatenToolPosition;
@@ -346,7 +346,7 @@
             return isCaptureMade;
         }        
 
-        private bool          toolMoovingOptionsCheck(int i_SourceXPosition, int i_SourceYPosition, int i_XColumnFactor, int i_YRowFactor)
+        private bool toolMoovingOptionsCheck(int i_SourceXPosition, int i_SourceYPosition, int i_XColumnFactor, int i_YRowFactor)
         {
             int toolFutureXPosition = i_SourceXPosition + i_XColumnFactor;
             int toolFutureYPosition = i_SourceYPosition + i_YRowFactor;
@@ -356,7 +356,7 @@
                 m_Board[toolFutureXPosition, toolFutureYPosition] == '\0';
         }
 
-        private bool          isPlayerCanMove(Player i_PlayingPlayer)
+        private bool isPlayerCanMove(Player i_PlayingPlayer)
         {
             bool canMove = false;
             int directionFactor = directionFactorCalculator(i_PlayingPlayer);
@@ -391,7 +391,7 @@
             return canMove;
         }
      
-        private bool          isTrooperBecomesAKing(Point i_Destination, Player i_PlayingPlayer)
+        private bool isTrooperBecomesAKing(Point i_Destination, Player i_PlayingPlayer)
         {
             bool isTrooperBecomesAKing = false;
 

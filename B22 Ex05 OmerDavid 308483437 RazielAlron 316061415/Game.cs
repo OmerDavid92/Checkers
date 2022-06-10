@@ -18,7 +18,7 @@
             Start();
         }
 
-        public void    InitialGame()
+        public void    InitialGame() // UI
         {
             string playerName;
             Enum.BoardSize boardSize;

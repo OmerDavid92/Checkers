@@ -111,6 +111,7 @@ namespace CheckersForm
             this.Player2CheckBox.TabIndex = 6;
             this.Player2CheckBox.Text = "Player 2:";
             this.Player2CheckBox.UseVisualStyleBackColor = true;
+            this.Player2CheckBox.Click += new System.EventHandler(this.Player2CheckBox_Click);
             // 
             // DoneButton
             // 
@@ -161,6 +162,7 @@ namespace CheckersForm
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Game Settings";
+            this.Load += new System.EventHandler(this.FormGameSettings_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

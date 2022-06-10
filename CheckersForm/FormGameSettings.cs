@@ -14,7 +14,7 @@ namespace CheckersForm
 {
     public partial class FormGameSettings : Form
     {
-        private FormBoard m_FormBoard = null;
+        public Board Board { get; private set; } = null;
         public FormGameSettings()
         {
             InitializeComponent();
@@ -87,12 +87,33 @@ namespace CheckersForm
         private void submitSettings(object sender, MouseEventArgs e)
         {
             int boardSize = getBoardSize();
-            Board board = new Board(boardSize);
+            Board = new Board(boardSize);
             Player player1 = getPlayer1();
             Player player2 = getPlayer2();
 
-            board.InitBoard(player1.m_ToolSign, player2.m_ToolSign);
-            m_FormBoard = new FormBoard(board);
+            Board.InitBoard(player1.m_ToolSign, player2.m_ToolSign);
+            DialogResult = DialogResult.OK;
+            Close();
+
+        }
+
+        private void FormGameSettings_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Player2CheckBox_Click(object sender, EventArgs e)
+        {
+            if (Player2CheckBox.Checked)
+            {
+                Player2TextBox.Text = "";
+                Player2TextBox.Enabled = true;
+            }
+            else
+            {
+                Player2TextBox.Text = "[Computer]";
+                Player2TextBox.Enabled = false;
+            }
         }
     }
 }

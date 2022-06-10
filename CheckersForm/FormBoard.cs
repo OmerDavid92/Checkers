@@ -13,12 +13,17 @@ namespace CheckersForm
 {
     public partial class FormBoard : Form
     {
-        private Control m_SelectedCell = null;
-
-        public FormBoard(Board i_Board)
+        private FormGameSettings m_FormGameSettings = new FormGameSettings();
+        private bool m_FirstClicked = false;
+        public FormBoard()
         {
+            m_FormGameSettings = new FormGameSettings();
             InitializeComponent();
-            resizeBoard(i_Board.m_Board.Length);
+
+            if (ensureFormGameSettingsSubmitted())
+            {
+                ShowDialog();
+            }
         }
 
         private void resizeBoard(int i_BoardSize)
@@ -28,21 +33,21 @@ namespace CheckersForm
             TableBoard.ColumnCount = i_BoardSize;
             TableBoard.RowCount = i_BoardSize;
 
-            for (int i = 0; i < i_BoardSize - 1; i++) 
-            {
-                TableBoard.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, spreadPrecent));
-                TableBoard.RowStyles.Add(new RowStyle(SizeType.Percent, spreadPrecent));
-            }
-        }
+            TableBoard.Width = this.Width / 6 * i_BoardSize - 20;//Tochange
+            TableBoard.Height = TableBoard.Width;//Tochange
+            this.Width = this.Width / 6 * i_BoardSize + 12;
+            this.Height = this.Width + 55;
+ 
 
-        private void label2_Click(object sender, EventArgs e)
-        {
+         //   for (int i = 0; i < i_BoardSize; i++)
+            //{
+                TableBoard.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                TableBoard.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+                //TableBoard.Columns[i].Width = TableBoard.Width / i_BoardSize;
+                //TableBoard.Rows[i].Height = TableBoard.Height / i_BoardSize;
+           // }
 
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
+            this.PanelScore.Left = Width / 2 - PanelScore.Width / 2;
         }
 
         private void FormBoard_Load(object sender, EventArgs e)
@@ -50,61 +55,88 @@ namespace CheckersForm
 
         }
 
-        private void TableBoard_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
+        private bool ensureFormGameSettingsSubmitted()
         {
-            if ((e.Column + e.Row) % 2 == 1)
+            bool formGameSettingsOk = false;
+
+            if (m_FormGameSettings.ShowDialog() == DialogResult.OK)
             {
-                e.Graphics.FillRectangle(Brushes.Black, e.CellBounds);
+                resizeBoard(m_FormGameSettings.Board.m_Board.GetLength(0));
+                formGameSettingsOk = true;
+            }
+
+            return formGameSettingsOk;
+        }
+
+
+
+        //private void Board_Click(object sender, EventArgs e)
+        //{
+        //    System.Drawing.Point cellPos;
+        //    MouseEventArgs mouseEvent = e as MouseEventArgs;
+        //    bool ValidCellPos = TryGetRowColIndex(
+        //            TableBoard,
+        //            new System.Drawing.Point(mouseEvent.X, mouseEvent.Y),
+        //            out cellPos);
+
+        //    if (!ValidCellPos)
+        //    {
+        //        return;
+        //    }
+        //    //validate Point
+
+
+        //    if (m_SelectedCell == null)
+        //    {
+        //        //TableBoard.GetControlFromPosition(cellPos.X, cellPos.Y).BackColor = Color.LightBlue;
+        //        Control ctrl = TableBoard.GetControlFromPosition(mouseEvent.X, mouseEvent.Y);
+
+        //        m_SelectedCell = TableBoard.GetControlFromPosition(cellPos.X, cellPos.Y);
+        //    }
+        //    else
+        //    {
+        //        if (TableBoard.GetControlFromPosition(cellPos.X, cellPos.Y) != m_SelectedCell)
+        //        {
+        //            // start logic
+        //            // print board
+        //        }
+
+        //        TableBoard.GetControlFromPosition(cellPos.X, cellPos.Y).BackColor = Color.White;
+        //        m_SelectedCell = null;
+        //    }
+        //}
+
+        private void TableBoard_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if ((e.ColumnIndex + e.RowIndex) % 2 == 1)
+            {
+                e.CellStyle.BackColor = Color.Black;
             }
             else
             {
-                e.Graphics.FillRectangle(Brushes.White, e.CellBounds);
+                e.CellStyle.BackColor = Color.White;
             }
         }
 
-        System.Drawing.Point GetRowColIndex(TableLayoutPanel i_TableLayoutPanel, System.Drawing.Point i_Point)
+        private void markCell(int i_rowIndex, int i_ColumnIndex)
         {
-            int width = i_TableLayoutPanel.Width;
-            int height = i_TableLayoutPanel.Height;
-            int[] widths = i_TableLayoutPanel.GetColumnWidths();
-
-            int i;
-            for (i = widths.Length - 1; i >= 0 && i_Point.X < width; i--)
-                width -= widths[i];
-            int col = i + 1;
-
-            int[] heights = i_TableLayoutPanel.GetRowHeights();
-            for (i = heights.Length - 1; i >= 0 && i_Point.Y < height; i--)
-                height -= heights[i];
-
-            int row = i + 1;
-
-            return new System.Drawing.Point(col, row);
-        }
-
-        private void Board_Click(object sender, EventArgs e)
-        {
-            System.Drawing.Point cellPos = GetRowColIndex(
-                    TableBoard,
-                    TableBoard.PointToClient(Cursor.Position));
-            //validate Point         
-            
-            if (m_SelectedCell == null)
+            if (m_FirstClicked)
             {
-                TableBoard.GetControlFromPosition(cellPos.X, cellPos.Y).BackColor = Color.LightBlue;
-                m_SelectedCell = TableBoard.GetControlFromPosition(cellPos.X, cellPos.Y);
-            }
-            else
-            {
-                if (TableBoard.GetControlFromPosition(cellPos.X, cellPos.Y) != m_SelectedCell)
-                { 
-                    // start logic
-                    // print board
+                if (TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.BackColor == Color.LightBlue)
+                {
+                    TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.BackColor = Color.White;
+                    m_FirstClicked = false;
                 }
 
-                TableBoard.GetControlFromPosition(cellPos.X, cellPos.Y).BackColor = Color.White;
-                m_SelectedCell = null;
+                TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.BackColor = Color.LightBlue;
+                m_FirstClicked = true;
             }
+        }
+
+
+        private void TableBoard_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            markCell(e.RowIndex, e.ColumnIndex);
         }
     }
 }
