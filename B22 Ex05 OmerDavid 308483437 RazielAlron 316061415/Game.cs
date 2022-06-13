@@ -115,7 +115,7 @@
         {
             Player previousPlayer = i_CurrentPlayingPlayer;
 
-            Ex02.ConsoleUtils.Screen.Clear();
+            //Ex02.ConsoleUtils.Screen.Clear();
             UserInterface.PrintBoard(m_Board);
             UserInterface.PrintErrorMessage(i_ErrorMessage);
 

@@ -13,7 +13,7 @@ namespace CheckersForm
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormBoard());
+            new FormBoard();
         }
     }
 }
