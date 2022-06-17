@@ -216,18 +216,27 @@ namespace CheckersForm
         private void initBoard()
         {
             m_BoardButtons = new Button[m_BoardSize, m_BoardSize];
-            int x_Location = 0;
-            int y_Location = 0;
+            int startX = 10;
+            int startY = 40;
+            int x_Location = startX;
+            int y_Location = startY;
+            int buttonSize = 0;
+
+            this.Width = m_BoardSize * 70;
+            this.Height = this.Width + 50;
+            buttonSize = (this.Width - 35) / m_BoardSize;
 
             for (int i = 0; i < m_BoardSize; i++)
             {
+                y_Location = startY + buttonSize * i;
+
                 for (int j = 0; j < m_BoardSize; j++)
                 {
                     m_BoardButtons[i, j] = new Button();
-                    m_BoardButtons[i, j].Width = this.Width / m_BoardSize;
-                    m_BoardButtons[i, j].Height = m_BoardButtons[i, j].Width;
-                    x_Location = m_BoardButtons[i, j].Width * i;
-                    y_Location += m_BoardButtons[i, j].Height * j;
+                    m_BoardButtons[i, j].Width = buttonSize;
+                    m_BoardButtons[i, j].Height = buttonSize;
+                    x_Location = startX + buttonSize * j;
+                    
                     m_BoardButtons[i, j].Location = new System.Drawing.Point(x_Location, y_Location);
                     this.Controls.Add(m_BoardButtons[i, j]);
                 }
