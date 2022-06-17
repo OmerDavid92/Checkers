@@ -44,7 +44,7 @@ namespace CheckersForm
             Enum.PlayerType PlayerType;
             string playerName = Player1.Text;
 
-            if (playerName == String.Empty)
+            if (playerName == string.Empty)
             {
                 playerName = "Player1";
             }
