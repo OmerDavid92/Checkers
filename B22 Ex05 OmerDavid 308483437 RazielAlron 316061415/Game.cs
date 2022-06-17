@@ -5,7 +5,7 @@
         public Board m_Board { get; private set; }
         public Player m_Player1 { get; private set; }
         public Player m_Player2 { get; private set; }
-        private Turn m_PreviousTurn = null;
+        public Turn m_PreviousTurn { get; private set; } = null;
 
         public Game(Enum.BoardSize i_BoardSize, Player i_Player1, Player i_Player2)
         {

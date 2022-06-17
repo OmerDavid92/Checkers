@@ -5,7 +5,7 @@
 
     public class Player
     {
-        private Enum.PlayerType m_PlayerType;
+        public Enum.PlayerType m_PlayerType { get; private set; }
 
         public string m_PlayerName { get; private set; }
 

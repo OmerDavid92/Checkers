@@ -34,7 +34,10 @@ namespace CheckersForm
             this.label4 = new System.Windows.Forms.Label();
             this.PanelScore = new System.Windows.Forms.Panel();
             this.LabelPlayer1Score = new System.Windows.Forms.Label();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.PanelScore.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -93,19 +96,40 @@ namespace CheckersForm
             this.LabelPlayer1Score.TabIndex = 5;
             this.LabelPlayer1Score.Text = "0";
             // 
+            // statusStrip
+            // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 319);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(319, 22);
+            this.statusStrip.SizingGrip = false;
+            this.statusStrip.TabIndex = 6;
+            this.statusStrip.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
             // FormBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(319, 341);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.PanelScore);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FormBoard";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Damka";
             this.Load += new System.EventHandler(this.FormBoard_Load);
             this.PanelScore.ResumeLayout(false);
             this.PanelScore.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -115,5 +139,7 @@ namespace CheckersForm
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Panel PanelScore;
         private System.Windows.Forms.Label LabelPlayer1Score;
+        private System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
     }
 }

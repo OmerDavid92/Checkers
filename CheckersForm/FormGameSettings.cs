@@ -65,7 +65,7 @@ namespace CheckersForm
                     (char)Enum.Player2Tools.Trooper,
                     (char)Enum.Player2Tools.King,
                     Enum.PlayerType.Human,
-                    true,
+                    false,
                     playerName);
             }
             else
