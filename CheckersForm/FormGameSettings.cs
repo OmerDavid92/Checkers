@@ -106,5 +106,10 @@ namespace CheckersForm
                 Player2TextBox.Enabled = false;
             }
         }
+
+        private void DoneButton_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

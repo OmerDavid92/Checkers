@@ -53,7 +53,7 @@ namespace CheckersForm
             if (UserInterface.GetUserInputIsRematch())
             {
                 m_LogicGame.InitBoard();
-                startLogicGame();
+                //startLogicGame();
             }
             else
             {
@@ -72,7 +72,7 @@ namespace CheckersForm
             while (!m_LogicGame.isMatchOver(m_CurrentPlayingPlayer, ref m_MatchWinner) && m_IsPlayerPlayed)
             {
                 //printState(currentPlayingPlayer, errorMessage); // UI - copy from Game / develop
-                m_IsPlayerPlayed = m_LogicGame.tryPlay(ref m_CurrentPlayingPlayer, ref m_ErrorMessage);
+                //m_IsPlayerPlayed = m_LogicGame.tryPlay(ref m_CurrentPlayingPlayer, ref m_ErrorMessage);
             }
 
             //printState(currentPlayingPlayer, errorMessage); // UI - copy from Game / develop
@@ -156,6 +156,7 @@ namespace CheckersForm
         private Turn getCurrentTurn(System.Drawing.Point i_Source, System.Drawing.Point i_Destination)
         {
             //get Turn from user move on UI
+            return null;
         }
 
         private void userFirstSelection(int i_rowIndex, int i_ColumnIndex)
@@ -214,6 +215,7 @@ namespace CheckersForm
 
         private void initBoard()
         {
+            m_BoardButtons = new Button[m_BoardSize, m_BoardSize];
             int x_Location = 0;
             int y_Location = 0;
 
@@ -222,15 +224,16 @@ namespace CheckersForm
                 for (int j = 0; j < m_BoardSize; j++)
                 {
                     m_BoardButtons[i, j] = new Button();
-                    m_BoardButtons[i, j].Width = TableBoard.Width / m_BoardSize;
+                    m_BoardButtons[i, j].Width = this.Width / m_BoardSize;
                     m_BoardButtons[i, j].Height = m_BoardButtons[i, j].Width;
-                    x_Location = m_BoardButtons[i, j].Width * i + 300;
-                    y_Location += m_BoardButtons[i, j].Height * j + 300;
+                    x_Location = m_BoardButtons[i, j].Width * i;
+                    y_Location += m_BoardButtons[i, j].Height * j;
                     m_BoardButtons[i, j].Location = new System.Drawing.Point(x_Location, y_Location);
+                    this.Controls.Add(m_BoardButtons[i, j]);
                 }
             }
 
-            printInitBoard();
+            PaintDefaultColorBoard();
         }
 
         private void FormBoard_Load(object sender, EventArgs e)

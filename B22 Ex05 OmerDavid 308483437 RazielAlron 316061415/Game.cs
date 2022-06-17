@@ -82,7 +82,7 @@
             endMatch(matchWinner);
         }
 
-        public bool   tryPlay(ref Player o_currentPlayingPlayer, ref string i_ErrorMessage, Turn i_UiTurn)
+        public bool   tryPlay(ref Player o_currentPlayingPlayer, ref string i_ErrorMessage, Turn i_UiTurn = null)
         {
             bool isPlayerPlayed = true;
             Turn currentTurn = null;
