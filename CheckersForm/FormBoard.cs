@@ -9,6 +9,7 @@ namespace CheckersForm
     public partial class FormBoard : Form
     {
         private FormGameSettings m_FormGameSettings = new FormGameSettings();
+        private int m_BoardSize;
         private Button[,] m_BoardButtons = null;
         private System.Drawing.Point? m_FirstClicked = null;
         private Game m_LogicGame = null;
@@ -20,7 +21,6 @@ namespace CheckersForm
         {
             m_FormGameSettings = new FormGameSettings();
             InitializeComponent();
-            setCellSelectionDefaultColor();
 
             if (ensureFormGameSettingsSubmitted())
             {
@@ -29,39 +29,9 @@ namespace CheckersForm
             }
         }
 
-        private void setCellSelectionDefaultColor()
-        {
-            TableBoard.DefaultCellStyle.SelectionBackColor = Color.Transparent;
-            TableBoard.DefaultCellStyle.SelectionForeColor = Color.Transparent;
-        }
-
-        private void resizeBoard(int i_BoardSize)
-        {
-            float spreadPrecent = 100 / i_BoardSize;
-
-            TableBoard.ColumnCount = i_BoardSize;
-            TableBoard.RowCount = i_BoardSize;
-
-            TableBoard.Width = this.Width / 6 * i_BoardSize - 20;//Tochange
-            TableBoard.Height = TableBoard.Width;//Tochange
-            this.Width = this.Width / 6 * i_BoardSize + 12;
-            this.Height = this.Width + 55;
- 
-
-            for (int i = 0; i < i_BoardSize; i++)
-            {
-                //TableBoard.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-                //TableBoard.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-                TableBoard.Columns[i].Width = TableBoard.Width / i_BoardSize;
-                TableBoard.Rows[i].Height = TableBoard.Height / i_BoardSize;
-            }
-
-            this.PanelScore.Left = Width / 2 - PanelScore.Width / 2;
-        }
-
         private void InitLogicGame()
         {
-            Checkers.Enum.BoardSize boardSize = (Checkers.Enum.BoardSize)m_FormGameSettings.GetBoardSize();
+            Checkers.Enum.BoardSize boardSize = (Checkers.Enum.BoardSize)m_BoardSize;
             Player player1 = m_FormGameSettings.GetPlayer1();
             Player player2 = m_FormGameSettings.GetPlayer2();
 
@@ -69,7 +39,7 @@ namespace CheckersForm
             m_CurrentPlayingPlayer = m_LogicGame.m_Player1;
         }
 
-        private void endMatch(Player i_MatchWinner) //UI
+        private void endMatch(Player i_MatchWinner)
         {
             Player lostPlayer = m_LogicGame.switchPlayer(i_MatchWinner);
 
@@ -92,14 +62,7 @@ namespace CheckersForm
                 {
                     ShowDialog();
                 }
-                InitialGameAndStart();
             }
-        }
-
-        private void InitialGameAndStart()
-        {
-            InitLogicGame();
-            startLogicGame();
         }
 
         private void startLogicGame()
@@ -128,9 +91,11 @@ namespace CheckersForm
 
             if (m_FormGameSettings.ShowDialog() == DialogResult.OK)
             {
+                m_BoardSize = m_FormGameSettings.GetBoardSize();
                 InitLogicGame();
-                resizeBoard(m_FormGameSettings.GetBoardSize());
-                printBoard();
+                initBoard();
+                PaintDefaultColorBoard();
+                updateBoardTroopers();
                 formGameSettingsOk = true;
             }
 
@@ -141,28 +106,36 @@ namespace CheckersForm
         {
             if ((i_ColumnIndex + i_rowIndex) % 2 == 1)
             {
-                TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.BackColor = Color.Black;
+                m_BoardButtons[i_rowIndex, i_ColumnIndex].BackColor = Color.Black;
             }
             else
             {
-                TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.BackColor = Color.White;
+                m_BoardButtons[i_rowIndex, i_ColumnIndex].BackColor = Color.White;
             }
         }
 
-        private void printBoard()
+        private void PaintDefaultColorBoard()
         {
-            for (int i = 0; i < TableBoard.RowCount; i++)
+            for (int i = 0; i < m_BoardSize; i++)
             {
-                for (int j = 0; j < TableBoard.ColumnCount; j++)
+                for (int j = 0; j < m_BoardSize; j++)
                 {
                     paintDefaultColorCell(i, j);
                 }
             }
         }
 
-        private void TableBoard_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        private void updateBoardTroopers()
         {
-            //paintDefaultColorCell(e.RowIndex, e.ColumnIndex);
+            char[,] board = m_LogicGame.m_Board.m_Board;
+
+            for (int i = 0; i < m_BoardSize; i++)
+            {
+                for (int j = 0; j < m_BoardSize; j++)
+                {
+                    m_BoardButtons[i, j].Text = board[i, j].ToString();
+                }
+            }
         }
 
         private bool validateClick(int i_rowIndex, int i_ColumnIndex)
@@ -180,32 +153,33 @@ namespace CheckersForm
             return isValidClick;
         }
 
+        private Turn getCurrentTurn(System.Drawing.Point i_Source, System.Drawing.Point i_Destination)
+        {
+            //get Turn from user move on UI
+        }
+
         private void userFirstSelection(int i_rowIndex, int i_ColumnIndex)
         {
-            TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.BackColor = Color.LightBlue;
-            TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.ForeColor = Color.LightBlue;
+            m_BoardButtons[i_rowIndex, i_ColumnIndex].BackColor = Color.LightBlue;
             m_FirstClicked = new System.Drawing.Point(i_rowIndex, i_ColumnIndex);
         }
 
         private void userRemovesSelection(int i_rowIndex, int i_ColumnIndex)
         {
-            TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.BackColor = Color.White;
-            TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.ForeColor = Color.White;
+            paintDefaultColorCell(i_rowIndex, i_ColumnIndex);
             m_FirstClicked = null;
-        }
-
-        private Turn getCurrentTurnForLogicGame(System.Drawing.Point i_Source, System.Drawing.Point i_Destination)
-        {
-            //get Turn from user move on UI
         }
 
         private void userSelectedDestination(int i_rowIndex, int i_ColumnIndex)
         {
-            TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.BackColor = Color.White;
-            TableBoard.Rows[i_rowIndex].Cells[i_ColumnIndex].Style.ForeColor = Color.White;
+            Turn currentTurn = null;
+            System.Drawing.Point destination = new System.Drawing.Point(i_rowIndex, i_ColumnIndex);
+            System.Drawing.Point source = m_FirstClicked ?? System.Drawing.Point.Empty;
+
+            paintDefaultColorCell(i_rowIndex, i_ColumnIndex);
             m_FirstClicked = null;
-            //logic move
-            m_IsPlayerPlayed = m_LogicGame.tryPlay(ref m_CurrentPlayingPlayer, ref m_ErrorMessage);
+            currentTurn = getCurrentTurn(source, destination);
+            m_IsPlayerPlayed = m_LogicGame.tryPlay(ref m_CurrentPlayingPlayer, ref m_ErrorMessage, currentTurn);
             //printState(currentPlayingPlayer, errorMessage); // UI - copy from Game / develop
 
             if (m_LogicGame.isMatchOver(m_CurrentPlayingPlayer, ref m_MatchWinner))
@@ -215,7 +189,7 @@ namespace CheckersForm
                     m_MatchWinner = m_LogicGame.switchPlayer(m_CurrentPlayingPlayer);
                 }
 
-                endMatch(m_MatchWinner); // UI - copy from Game / develop
+                endMatch(m_MatchWinner);
             }
         }
 
@@ -238,36 +212,25 @@ namespace CheckersForm
             }
         }
 
-        private void paintButton(int i_rowIndex, int i_ColumnIndex, Button i_button)
-        {
-            if ((i_ColumnIndex + i_rowIndex) % 2 == 1)
-            {
-                i_button.BackColor = Color.Black;
-            }
-            else
-            {
-                i_button.BackColor = Color.White;
-            }
-        }
-
-        private void FormBoard_Buttons(int i_BoardSize)
+        private void initBoard()
         {
             int x_Location = 0;
             int y_Location = 0;
 
-            for (int i = 0; i < i_BoardSize; i++)
+            for (int i = 0; i < m_BoardSize; i++)
             {
-                for (int j = 0; j < i_BoardSize; j++)
+                for (int j = 0; j < m_BoardSize; j++)
                 {
                     m_BoardButtons[i, j] = new Button();
-                    m_BoardButtons[i, j].Width = TableBoard.Width / i_BoardSize;
+                    m_BoardButtons[i, j].Width = TableBoard.Width / m_BoardSize;
                     m_BoardButtons[i, j].Height = m_BoardButtons[i, j].Width;
                     x_Location = m_BoardButtons[i, j].Width * i + 300;
                     y_Location += m_BoardButtons[i, j].Height * j + 300;
                     m_BoardButtons[i, j].Location = new System.Drawing.Point(x_Location, y_Location);
-                    paintButton(i, j, m_BoardButtons[i, j]);
                 }
             }
+
+            printInitBoard();
         }
 
         private void FormBoard_Load(object sender, EventArgs e)
