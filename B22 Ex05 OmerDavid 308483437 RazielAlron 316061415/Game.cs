@@ -2,19 +2,34 @@
 {
     public class Game
     {
-        private Board m_Board;
-        private Player m_Player1;
-        private Player m_Player2;
+        public Board m_Board { get; private set; }
+        public Player m_Player1 { get; private set; }
+        public Player m_Player2 { get; private set; }
         private Turn m_PreviousTurn = null;
 
-        public Game() 
+        public Game(Enum.BoardSize i_BoardSize, Player i_Player1, Player i_Player2)
         {
-            InitialGameAndStart();
+            m_Player1 = i_Player1;
+            m_Player2 = i_Player2;
+            m_Board = new Board((int)i_BoardSize);
+            InitBoard();
+            //InitialGameAndStart();
         }
 
-        public void    InitialGameAndStart()
+        public void InitBoard()
         {
-            InitialGame();
+            m_Board.InitBoard(m_Player1.m_ToolSign, m_Player2.m_ToolSign);
+        }
+
+        public void ResetPreviousTurn()
+        {
+            m_PreviousTurn = null;
+        }
+
+        public void    InitialGameAndStart() // UI
+        {
+            m_PreviousTurn = null;
+            //InitialGame();
             Start();
         }
 
@@ -44,7 +59,7 @@
             m_Board.InitBoard(m_Player1.m_ToolSign, m_Player2.m_ToolSign);
         }
 
-        public void    Start()
+        public void    Start() // UI
         {
             Player currentPlayingPlayer = m_Player1;
             Player matchWinner = null;
@@ -67,12 +82,19 @@
             endMatch(matchWinner);
         }
 
-        private bool   tryPlay(ref Player o_currentPlayingPlayer, ref string i_ErrorMessage)
+        public bool   tryPlay(ref Player o_currentPlayingPlayer, Turn i_UiTurn, ref string i_ErrorMessage)
         {
             bool isPlayerPlayed = true;
             Turn currentTurn = null;
 
-            isPlayerPlayed = o_currentPlayingPlayer.TryGetTurn(m_Board, ref currentTurn);
+            if (i_UiTurn != null)
+            {
+                currentTurn = i_UiTurn;
+            }
+            else
+            {
+                isPlayerPlayed = o_currentPlayingPlayer.TryGetTurn(m_Board, ref currentTurn);
+            }
 
             if (isPlayerPlayed
                 && validateCaptureAgain(currentTurn)
@@ -111,7 +133,7 @@
             return isValid;
         }
 
-        private void   printState(Player i_CurrentPlayingPlayer, string i_ErrorMessage)
+        private void   printState(Player i_CurrentPlayingPlayer, string i_ErrorMessage) //UI
         {
             Player previousPlayer = i_CurrentPlayingPlayer;
 
@@ -127,7 +149,7 @@
             UserInterface.PrintLastPlay(previousPlayer, m_PreviousTurn);
         }
 
-        private Player switchPlayer(Player i_CurrentPlayingPlayer)
+        public Player switchPlayer(Player i_CurrentPlayingPlayer)
         {
             Player nextPlayingPlayer = m_Player1;
 
@@ -139,7 +161,7 @@
             return nextPlayingPlayer;
         }
 
-        private void   endMatch(Player i_MatchWinner)
+        private void   endMatch(Player i_MatchWinner) //UI
         {
             Player lostPlayer = switchPlayer(i_MatchWinner);
 
@@ -149,7 +171,6 @@
             }
 
             UserInterface.PrintWinnerMatch(i_MatchWinner, lostPlayer);
-            m_PreviousTurn = null;
 
             if (UserInterface.GetUserInputIsRematch())
             {
@@ -163,7 +184,7 @@
             }
         }
 
-        private bool   isMatchOver(Player i_CurrentPlayingPlayer, ref Player o_Winner)
+        public bool   isMatchOver(Player i_CurrentPlayingPlayer, ref Player o_Winner)
         {
             bool isOver = false;
 
@@ -184,7 +205,7 @@
             return isOver;
         }
 
-        private void   calculateMatchWinnerScore(Player i_Winner)
+        public void   calculateMatchWinnerScore(Player i_Winner)
         {
             int winnerPointsOnBoard = m_Board.SumOfPointsOnBoard(i_Winner);
             int loserPointsOnBoard = m_Board.SumOfPointsOnBoard(switchPlayer(i_Winner));
@@ -192,7 +213,7 @@
             i_Winner.m_Score += winnerPointsOnBoard - loserPointsOnBoard;
         }
 
-        private Player getGameWinner()
+        public Player getGameWinner()
         {
             Player winner = null;
 

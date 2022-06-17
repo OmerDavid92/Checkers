@@ -33,10 +33,10 @@
             }
             else
             {
-                UserInterface.PrintWaitForTurn(this);
+                //UserInterface.PrintWaitForTurn(this);
                 System.Threading.Thread.Sleep(3000);
                 calculateTurn(i_Board, ref o_Turn);
-                UserInterface.PrintPCTurn(o_Turn);
+                //UserInterface.PrintPCTurn(o_Turn);
             }
 
             return isPlayerPlayed;

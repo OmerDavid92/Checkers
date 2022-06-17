@@ -14,13 +14,12 @@ namespace CheckersForm
 {
     public partial class FormGameSettings : Form
     {
-        public Board Board { get; private set; } = null;
         public FormGameSettings()
         {
             InitializeComponent();
         }
 
-        private int getBoardSize()
+        public int GetBoardSize()
         {
             int boardSize = 0;
 
@@ -40,7 +39,7 @@ namespace CheckersForm
             return boardSize;
         }
 
-        private Player getPlayer1()
+        public Player GetPlayer1()
         {
             Enum.PlayerType PlayerType;
             string playerName = Player1.Text;
@@ -53,7 +52,7 @@ namespace CheckersForm
                 playerName);
         }
 
-        private Player getPlayer2()
+        public Player GetPlayer2()
         {
             Player player2;
             Enum.PlayerType PlayerType;
@@ -83,23 +82,15 @@ namespace CheckersForm
             return player2;
         }
 
-
-        private void submitSettings(object sender, MouseEventArgs e)
-        {
-            int boardSize = getBoardSize();
-            Board = new Board(boardSize);
-            Player player1 = getPlayer1();
-            Player player2 = getPlayer2();
-
-            Board.InitBoard(player1.m_ToolSign, player2.m_ToolSign);
-            DialogResult = DialogResult.OK;
-            Close();
-
-        }
-
         private void FormGameSettings_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void submitSettings(object sender, MouseEventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void Player2CheckBox_Click(object sender, EventArgs e)
