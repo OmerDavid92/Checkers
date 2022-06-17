@@ -13,6 +13,9 @@
 
         public void InitBoard(ToolSign i_Player1, ToolSign i_Player2)
         {
+            int boardSize = m_Board.GetLength(0);
+
+            m_Board = new char[boardSize, boardSize];
             insertPlayerSignToTheBoard(i_Player1.m_TrooperSign, (m_Board.GetLength(0) / 2) + 1);
             insertPlayerSignToTheBoard(i_Player2.m_TrooperSign, 0);
         }

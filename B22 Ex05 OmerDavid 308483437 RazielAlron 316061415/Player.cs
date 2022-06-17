@@ -5,7 +5,7 @@
 
     public class Player
     {
-        private Enum.PlayerType m_PlayerType;
+        public Enum.PlayerType m_PlayerType { get; private set; }
 
         public string m_PlayerName { get; private set; }
 
@@ -33,10 +33,10 @@
             }
             else
             {
-                UserInterface.PrintWaitForTurn(this);
+                //UserInterface.PrintWaitForTurn(this);
                 System.Threading.Thread.Sleep(3000);
                 calculateTurn(i_Board, ref o_Turn);
-                UserInterface.PrintPCTurn(o_Turn);
+                //UserInterface.PrintPCTurn(o_Turn);
             }
 
             return isPlayerPlayed;

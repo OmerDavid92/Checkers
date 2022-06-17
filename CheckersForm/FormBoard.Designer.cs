@@ -34,9 +34,10 @@ namespace CheckersForm
             this.label4 = new System.Windows.Forms.Label();
             this.PanelScore = new System.Windows.Forms.Panel();
             this.LabelPlayer1Score = new System.Windows.Forms.Label();
-            this.TableBoard = new System.Windows.Forms.DataGridView();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.PanelScore.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TableBoard)).BeginInit();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -79,7 +80,7 @@ namespace CheckersForm
             this.PanelScore.Controls.Add(this.label1);
             this.PanelScore.Controls.Add(this.label4);
             this.PanelScore.Location = new System.Drawing.Point(59, 8);
-            this.PanelScore.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PanelScore.Margin = new System.Windows.Forms.Padding(2);
             this.PanelScore.Name = "PanelScore";
             this.PanelScore.Size = new System.Drawing.Size(197, 23);
             this.PanelScore.TabIndex = 5;
@@ -95,38 +96,40 @@ namespace CheckersForm
             this.LabelPlayer1Score.TabIndex = 5;
             this.LabelPlayer1Score.Text = "0";
             // 
-            // TableBoard
+            // statusStrip
             // 
-            this.TableBoard.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.TableBoard.ColumnHeadersVisible = false;
-            this.TableBoard.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.TableBoard.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.TableBoard.Location = new System.Drawing.Point(8, 37);
-            this.TableBoard.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.TableBoard.Name = "TableBoard";
-            this.TableBoard.RowHeadersVisible = false;
-            this.TableBoard.RowHeadersWidth = 62;
-            this.TableBoard.RowTemplate.Height = 28;
-            this.TableBoard.Size = new System.Drawing.Size(300, 300);
-            this.TableBoard.TabIndex = 0;
-            this.TableBoard.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.TableBoard_CellClick);
-            this.TableBoard.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.TableBoard_CellPainting);
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 319);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(319, 22);
+            this.statusStrip.SizingGrip = false;
+            this.statusStrip.TabIndex = 6;
+            this.statusStrip.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // FormBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(319, 341);
-            this.Controls.Add(this.TableBoard);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.PanelScore);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FormBoard";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Damka";
             this.Load += new System.EventHandler(this.FormBoard_Load);
             this.PanelScore.ResumeLayout(false);
             this.PanelScore.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TableBoard)).EndInit();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -136,6 +139,7 @@ namespace CheckersForm
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Panel PanelScore;
         private System.Windows.Forms.Label LabelPlayer1Score;
-        private System.Windows.Forms.DataGridView TableBoard;
+        private System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
     }
 }
