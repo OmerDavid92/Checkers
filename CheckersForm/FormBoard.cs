@@ -1,12 +1,12 @@
-﻿using Checkers;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-using Enum = Checkers.Enum;
-using Point = Checkers.Point;
-
-namespace CheckersForm
+﻿namespace CheckersForm
 {
+    using System;
+    using System.Drawing;
+    using System.Windows.Forms;
+    using Checkers;
+    using Enum = Checkers.Enum;
+    using Point = Checkers.Point;
+
     public partial class FormBoard : Form
     {
         private readonly FormGameSettings m_FormGameSettings = new FormGameSettings();
@@ -284,11 +284,11 @@ namespace CheckersForm
             this.Width = m_BoardSize * 60;
             this.Height = this.Width + 70;
             buttonSize = (this.Width - 35) / m_BoardSize;
-            PanelScore.Left = this.Width / 2 - PanelScore.Width / 2;
+            PanelScore.Left = (this.Width / 2) - (PanelScore.Width / 2);
 
             for (int i = 0; i < m_BoardSize; i++)
             {
-                y_Location = startY + buttonSize * i;
+                y_Location = startY + (buttonSize * i);
 
                 for (int j = 0; j < m_BoardSize; j++)
                 {
@@ -297,7 +297,7 @@ namespace CheckersForm
                     m_BoardButtons[i, j].Click += BoardButtons_CellClick;
                     m_BoardButtons[i, j].Width = buttonSize;
                     m_BoardButtons[i, j].Height = buttonSize;
-                    x_Location = startX + buttonSize * j;
+                    x_Location = startX + (buttonSize * j);
                     m_BoardButtons[i, j].Location = new System.Drawing.Point(x_Location, y_Location);
 
                     this.Controls.Add(m_BoardButtons[i, j]);
@@ -305,11 +305,6 @@ namespace CheckersForm
             }
 
             PaintDefaultColorBoard();
-        }
-
-        private void FormBoard_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

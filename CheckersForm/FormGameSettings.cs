@@ -1,17 +1,10 @@
-﻿using Checkers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Enum = Checkers.Enum;
-
-namespace CheckersForm
+﻿namespace CheckersForm
 {
+    using System;
+    using System.Windows.Forms;
+    using Checkers;
+    using Enum = Checkers.Enum;
+
     public partial class FormGameSettings : Form
     {
         public FormGameSettings()
@@ -27,11 +20,11 @@ namespace CheckersForm
             {
                 boardSize = 6;
             }
-            if (RadioButtonBoardSize8X8.Checked)
+            else if (RadioButtonBoardSize8X8.Checked)
             {
                 boardSize = 8;
             }
-            if (RadioButtonBoardSize10X10.Checked)
+            else if (RadioButtonBoardSize10X10.Checked)
             {
                 boardSize = 10;
             }
@@ -41,7 +34,6 @@ namespace CheckersForm
 
         public Player GetPlayer1()
         {
-            Enum.PlayerType PlayerType;
             string playerName = Player1.Text;
 
             if (playerName == string.Empty)
@@ -60,7 +52,6 @@ namespace CheckersForm
         public Player GetPlayer2()
         {
             Player player2;
-            Enum.PlayerType PlayerType;
             string playerName = string.Empty;
 
             if (Player2CheckBox.Checked)
@@ -87,11 +78,6 @@ namespace CheckersForm
             return player2;
         }
 
-        private void FormGameSettings_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void submitSettings(object sender, MouseEventArgs e)
         {
             DialogResult = DialogResult.OK;
@@ -102,7 +88,7 @@ namespace CheckersForm
         {
             if (Player2CheckBox.Checked)
             {
-                Player2TextBox.Text = "";
+                Player2TextBox.Text = string.Empty;
                 Player2TextBox.Enabled = true;
             }
             else
@@ -110,11 +96,6 @@ namespace CheckersForm
                 Player2TextBox.Text = "[Computer]";
                 Player2TextBox.Enabled = false;
             }
-        }
-
-        private void DoneButton_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
