@@ -212,6 +212,7 @@ namespace CheckersForm
             m_IsPlayerPlayed = m_LogicGame.tryPlay(ref m_CurrentPlayingPlayer, ref m_ErrorMessage, currentTurn);
             m_FirstClicked = null;
             paintDefaultColorCell(source.X, source.Y);
+            updateStatusStrip();
             endOfTurn();
         }
 
@@ -219,6 +220,7 @@ namespace CheckersForm
         {
             m_ErrorMessage = string.Empty;
             m_IsPlayerPlayed = m_LogicGame.tryPlay(ref m_CurrentPlayingPlayer, ref m_ErrorMessage);
+            updateStatusStrip();
             endOfTurn();
         }
         
@@ -227,7 +229,6 @@ namespace CheckersForm
             if (m_ErrorMessage == string.Empty)
             {
                 updateGameState(m_ErrorMessage);
-                updateStatusStrip();
 
                 if (m_LogicGame.isMatchOver(m_CurrentPlayingPlayer, ref m_MatchWinner))
                 {
