@@ -9,7 +9,7 @@ namespace CheckersForm
 {
     public partial class FormBoard : Form
     {
-        private FormGameSettings m_FormGameSettings = new FormGameSettings();
+        private readonly FormGameSettings m_FormGameSettings = new FormGameSettings();
         private int m_BoardSize;
         private Button[,] m_BoardButtons = null;
         private System.Drawing.Point? m_FirstClicked = null;
@@ -18,6 +18,7 @@ namespace CheckersForm
         private Player m_MatchWinner = null;
         private bool m_IsPlayerPlayed = true;
         private string m_ErrorMessage = string.Empty;
+
         public FormBoard()
         {
             m_FormGameSettings = new FormGameSettings();
@@ -109,15 +110,15 @@ namespace CheckersForm
             return formGameSettingsOk;
         }
 
-        private void paintDefaultColorCell(int i_rowIndex, int i_ColumnIndex)
+        private void paintDefaultColorCell(int i_RowIndex, int i_ColumnIndex)
         {
-            if ((i_ColumnIndex + i_rowIndex) % 2 == 0)
+            if ((i_ColumnIndex + i_RowIndex) % 2 == 0)
             {
-                m_BoardButtons[i_rowIndex, i_ColumnIndex].BackColor = Color.Black;
+                m_BoardButtons[i_RowIndex, i_ColumnIndex].BackColor = Color.Black;
             }
             else
             {
-                m_BoardButtons[i_rowIndex, i_ColumnIndex].BackColor = Color.White;
+                m_BoardButtons[i_RowIndex, i_ColumnIndex].BackColor = Color.White;
             }
         }
 
@@ -147,16 +148,19 @@ namespace CheckersForm
             Application.DoEvents();
         }
 
-        private bool validateClick(int i_rowIndex, int i_ColumnIndex)
+        private bool validateClick(int i_RowIndex, int i_ColumnIndex)
         {
             bool isValidClick = true;
 
-            if ((i_ColumnIndex + i_rowIndex) % 2 == 0)
+            if ((i_ColumnIndex + i_RowIndex) % 2 == 0)
             {
                 isValidClick = false;
-            } else if (m_FirstClicked == null &&
-                       m_BoardButtons[i_rowIndex, i_ColumnIndex].Text != m_CurrentPlayingPlayer.m_ToolSign.m_TrooperSign.ToString() &&
-                       m_BoardButtons[i_rowIndex, i_ColumnIndex].Text != m_CurrentPlayingPlayer.m_ToolSign.m_KingSign.ToString())
+            }
+            else if (m_FirstClicked == null &&
+                     m_BoardButtons[i_RowIndex, i_ColumnIndex].Text !=
+                     m_CurrentPlayingPlayer.m_ToolSign.m_TrooperSign.ToString() &&
+                     m_BoardButtons[i_RowIndex, i_ColumnIndex].Text !=
+                     m_CurrentPlayingPlayer.m_ToolSign.m_KingSign.ToString())
             {
                 isValidClick = false;
             }
@@ -179,39 +183,33 @@ namespace CheckersForm
 
             updateBoardTroopers();
 
-            if (i_ErrorMessage != null)
-            {
-
-            }
-
             if (previousTurn != null && !previousTurn.m_ShouldCaptureAgain)
             {
                 previousPlayer = m_LogicGame.switchPlayer(m_CurrentPlayingPlayer);
             }
         }
 
-        private void userFirstSelection(int i_rowIndex, int i_ColumnIndex)
+        private void userFirstSelection(int i_RowIndex, int i_ColumnIndex)
         {
-            m_BoardButtons[i_rowIndex, i_ColumnIndex].BackColor = Color.LightBlue;
-            m_FirstClicked = new System.Drawing.Point(i_rowIndex, i_ColumnIndex);
+            m_BoardButtons[i_RowIndex, i_ColumnIndex].BackColor = Color.LightBlue;
+            m_FirstClicked = new System.Drawing.Point(i_RowIndex, i_ColumnIndex);
         }
 
-        private void userRemovesSelection(int i_rowIndex, int i_ColumnIndex)
+        private void userRemovesSelection(int i_RowIndex, int i_ColumnIndex)
         {
-            paintDefaultColorCell(i_rowIndex, i_ColumnIndex);
+            paintDefaultColorCell(i_RowIndex, i_ColumnIndex);
             m_FirstClicked = null;
         }
 
-        private void userSelectedDestination(int i_rowIndex, int i_ColumnIndex)
+        private void userSelectedDestination(int i_RowIndex, int i_ColumnIndex)
         {
             Turn currentTurn = null;
-            System.Drawing.Point destination = new System.Drawing.Point(i_rowIndex, i_ColumnIndex);
+            System.Drawing.Point destination = new System.Drawing.Point(i_RowIndex, i_ColumnIndex);
             System.Drawing.Point source = m_FirstClicked ?? System.Drawing.Point.Empty;
 
             currentTurn = getCurrentTurn(source, destination);
             m_ErrorMessage = string.Empty;
             m_IsPlayerPlayed = m_LogicGame.tryPlay(ref m_CurrentPlayingPlayer, ref m_ErrorMessage, currentTurn);
-            updateStatusStrip();
             m_FirstClicked = null;
             paintDefaultColorCell(source.X, source.Y);
             endOfTurn();
@@ -221,7 +219,6 @@ namespace CheckersForm
         {
             m_ErrorMessage = string.Empty;
             m_IsPlayerPlayed = m_LogicGame.tryPlay(ref m_CurrentPlayingPlayer, ref m_ErrorMessage);
-            updateStatusStrip();
             endOfTurn();
         }
         
@@ -230,6 +227,7 @@ namespace CheckersForm
             if (m_ErrorMessage == string.Empty)
             {
                 updateGameState(m_ErrorMessage);
+                updateStatusStrip();
 
                 if (m_LogicGame.isMatchOver(m_CurrentPlayingPlayer, ref m_MatchWinner))
                 {
@@ -247,7 +245,7 @@ namespace CheckersForm
             }
             else
             {
-                MessageBox.Show(m_ErrorMessage, "Move Error", MessageBoxButtons.OK);
+                MessageBox.Show(m_ErrorMessage, "Error", MessageBoxButtons.OK);
             }
         }
 
@@ -282,7 +280,7 @@ namespace CheckersForm
             int y_Location = startY;
             int buttonSize = 0;
 
-            this.Width = m_BoardSize * 70;
+            this.Width = m_BoardSize * 60;
             this.Height = this.Width + 70;
             buttonSize = (this.Width - 35) / m_BoardSize;
             PanelScore.Left = this.Width / 2 - PanelScore.Width / 2;
